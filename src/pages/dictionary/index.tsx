@@ -2,23 +2,12 @@ import { Component } from "react";
 import { View, Text, Input } from "@tarojs/components";
 import pinyin from "pinyin";
 import { idiomArr } from "../../config/idiom";
+import {debounce} from '../../utils';
+import {Radio} from '../../components'
+import styles from "./index.less";
 
-import "./index.less";
-
-export default class Index extends Component {
-  componentWillMount() {}
-
-  componentDidMount() {
-    console.log('%c zjs pinyin:', 'color: #fff;background: #b457ff;', pinyin);
-  }
-
-  componentWillUnmount() {}
-
-  componentDidShow() {}
-
-  componentDidHide() {}
-
-  handleInput = (customEvent) => {
+const Dictionary = () => {
+  const handleInput = (customEvent) => {
     console.log('%c zjs value:', 'color: #fff;background: #b457ff;', customEvent.detail.value);
     const firstLetter = customEvent.detail.value[0]
     console.log('%c zjs firstLetter:', 'color: #fff;background: #b457ff;', firstLetter);
@@ -27,13 +16,12 @@ export default class Index extends Component {
     // pinyin(firstLetter)
     // console.log('%c zjs pinyin(firstLetter):', 'color: #fff;background: #b457ff;', pinyin(firstLetter || ''));
   }
-
-  render() {
-    return (
-      <View className='index'>
-        <Text>成语字典</Text>
-        <Input onInput={this.handleInput}></Input>
-      </View>
-    );
-  }
+  return (
+    <View className='index'>
+      <Input onInput={debounce(handleInput)}></Input>
+      <Radio />
+    </View>
+  );
 }
+
+export default Dictionary;
