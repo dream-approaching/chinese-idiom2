@@ -20,7 +20,7 @@ const Home = () => {
   };
 
   return (
-    <View className='index'>
+    <View className="index">
       <View onClick={handleToDictionary}>
         <Text>查成语</Text>
       </View>
@@ -29,6 +29,6 @@ const Home = () => {
       </View>
     </View>
   );
-}
+};
 
 export default Home;
