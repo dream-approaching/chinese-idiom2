@@ -1,12 +1,15 @@
-import { useState, useEffect } from "react";
-import { View, Text, Input } from "@tarojs/components";
+import { useState, useEffect, useCallback } from "react";
+import { View, Text } from "@tarojs/components";
 import pinyin from "pinyin";
-import { AtSearchBar } from "taro-ui";
-import { idiomArr } from "../../config/idiom";
+import { AtSearchBar, AtTag } from "taro-ui";
+import { AllIdiomList } from "../../config/idiom";
 import { useDebounce } from "../../hooks";
-import { Radio } from "../../components";
-import styles from "./index.less";
+import styles from "./index.module.less";
 
+const AllIdiomListWithPinyin = AllIdiomList.map((item) => ({
+  value: item,
+  pinyin: pinyin(item, { style: pinyin.STYLE_NORMAL })[0]?.[0],
+}));
 const Dictionary = () => {
   const [searchValue, setSearchValue] = useState("");
   const debouncedValue = useDebounce<string>(searchValue, 500);
@@ -15,29 +18,95 @@ const Dictionary = () => {
     setSearchValue(value);
   };
 
-  useEffect(() => {
-    console.log("这里处理请求");
+  const [searchArr, setSearchArr] = useState([
+    { name: "首音节相同", value: 1, checked: false },
+    { name: "首字相同", value: 2, checked: false },
+  ]);
+
+  const getResult = useCallback(() => {
     const firstLetter = debouncedValue[0];
-    console.log(
-      "%c zjs firstLetter:",
-      "color: #fff;background: #b457ff;",
-      firstLetter
-    );
-    const filterArr = idiomArr.filter((item) => item[0] === firstLetter);
-    console.log(
-      "%c zjs filterArr:",
-      "color: #fff;background: #b457ff;",
-      filterArr
-    );
-  }, [debouncedValue]);
+    let filterArr: string[] = [];
+    const isSameYin = searchArr.find((item) => item.value === 1)?.checked;
+    const isSameWord = searchArr.find((item) => item.value === 2)?.checked;
+    if (isSameYin) {
+      // 搜索框第一个字的拼音
+      const searchValueFirstPinyin = pinyin(debouncedValue, {
+        style: pinyin.STYLE_NORMAL,
+      })[0][0];
+      AllIdiomListWithPinyin.forEach((item) => {
+        if (item.pinyin === searchValueFirstPinyin) {
+          filterArr.push(item.value);
+        }
+      });
+    } else if (isSameWord) {
+      filterArr = AllIdiomList.filter((item) => item[0] === firstLetter);
+    } else {
+      filterArr = AllIdiomList.filter(
+        (item) => item.indexOf(debouncedValue) > -1
+      );
+    }
+    setShowArr(filterArr);
+  }, [debouncedValue, searchArr]);
+
+  const [showArr, setShowArr] = useState<string[]>([]);
+  useEffect(() => {
+    if (debouncedValue) {
+      getResult();
+    }
+  }, [debouncedValue, getResult]);
+
+  const handleToggleFilter = (currentItem) => {
+    const newSearchArr = searchArr.map((item) => {
+      if (item.value === currentItem.value) {
+        item.checked = !item.checked;
+      }
+      return item;
+    });
+    setSearchArr(newSearchArr);
+  };
+
+  const isSearching = !!debouncedValue;
   return (
     <View className="index">
       <AtSearchBar
         value={searchValue}
         onChange={handleChange}
-        // onActionClick={this.onActionClick.bind(this)}
+        onActionClick={getResult}
       />
-      <Radio />
+      <View className={styles.tagCon}>
+        {searchArr.map((item) => {
+          return (
+            <AtTag
+              circle
+              size="small"
+              key={item.value}
+              active={item.checked}
+              className={styles.tag}
+              onClick={() => handleToggleFilter(item)}
+            >
+              {item.name}
+            </AtTag>
+          );
+        })}
+      </View>
+      {isSearching && showArr.length > 0 && (
+        <Text className={styles.title}>搜索结果</Text>
+      )}
+      {isSearching && (
+        <View className={styles.showArrCon}>
+          {showArr.length ? (
+            showArr.map((item, index) => {
+              return (
+                <AtTag className={styles.showArrItem} key={index}>
+                  {item}
+                </AtTag>
+              );
+            })
+          ) : (
+            <Text className={styles.noResult}>暂无结果</Text>
+          )}
+        </View>
+      )}
     </View>
   );
 };

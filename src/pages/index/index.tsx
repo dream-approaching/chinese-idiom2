@@ -2,7 +2,7 @@ import { Component } from "react";
 import Taro from "@tarojs/taro";
 import { View, Text, Input } from "@tarojs/components";
 import pinyin from "pinyin";
-import { idiomArr } from "../../config/idiom";
+import { AllIdiomList } from "../../config/idiom";
 
 import "./index.less";
 
