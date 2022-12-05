@@ -65,7 +65,8 @@ const Dictionary = () => {
     // });
     // setSearchArr(newSearchArr);
     const res = await Taro.request({
-      url: "/cidian-api/idiom/list",
+      url: "https://zhengjinshou.cn/cidian-api/idiom/list",
+      mode: "cors",
     });
     console.log("%c zjs res:", "color: #fff;background: #b457ff;", res);
   };
