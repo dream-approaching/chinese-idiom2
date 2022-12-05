@@ -7,7 +7,13 @@ module.exports = {
   mini: {},
   h5: {
     devServer: {
-      hot: false
+      hot: false,
+      proxy: {
+        '/cidian-api/': {
+          target: "http://localhost:7001/",
+          changeOrigin: true
+        }
+      },
     }
   }
 }

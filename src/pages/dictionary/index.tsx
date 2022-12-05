@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { View, Text } from "@tarojs/components";
+import Taro from "@tarojs/taro";
 import pinyin from "pinyin";
 import { AtSearchBar, AtTag } from "taro-ui";
 import { AllIdiomList } from "../../config/idiom";
@@ -55,14 +56,18 @@ const Dictionary = () => {
     }
   }, [debouncedValue, getResult]);
 
-  const handleToggleFilter = (currentItem) => {
-    const newSearchArr = searchArr.map((item) => {
-      if (item.value === currentItem.value) {
-        item.checked = !item.checked;
-      }
-      return item;
+  const handleToggleFilter = async (currentItem) => {
+    // const newSearchArr = searchArr.map((item) => {
+    //   if (item.value === currentItem.value) {
+    //     item.checked = !item.checked;
+    //   }
+    //   return item;
+    // });
+    // setSearchArr(newSearchArr);
+    const res = await Taro.request({
+      url: "/cidian-api/idiom/list",
     });
-    setSearchArr(newSearchArr);
+    console.log("%c zjs res:", "color: #fff;background: #b457ff;", res);
   };
 
   const isSearching = !!debouncedValue;
