@@ -33,9 +33,9 @@ const Dictionary = () => {
   const getResult = useCallback(() => {
     const firstLetter = debouncedValue[0];
     let filterArr: string[] = [];
-    const isSameYin = searchArr.find((item) => item.value === 1)?.checked;
-    const isSameWord = searchArr.find((item) => item.value === 2)?.checked;
-    if (isSameYin) {
+    const isPinYin = searchArr.find((item) => item.value === 1)?.checked;
+    const isWord = searchArr.find((item) => item.value === 2)?.checked;
+    if (isPinYin) {
       // 搜索框第一个字的拼音
       const searchValueFirstPinyin = pinyin(debouncedValue, {
         style: pinyin.STYLE_NORMAL,
@@ -45,7 +45,7 @@ const Dictionary = () => {
           filterArr.push(item.value);
         }
       });
-    } else if (isSameWord) {
+    } else if (isWord) {
       filterArr = AllIdiomList.filter((item) => item[0] === firstLetter);
     } else {
       filterArr = AllIdiomList.filter(
@@ -55,6 +55,17 @@ const Dictionary = () => {
     setShowArr(filterArr);
   }, [debouncedValue, searchArr]);
 
+  const getIdiomList = useCallback(async () => {
+    const res = await HttpRequest<IdiomListGetReq, IdiomListGetRes["data"]>({
+      url: IdiomApi.getList,
+      data: {
+        word: "一",
+      },
+    });
+    return res?.list;
+    console.log("%c zjs res:", "color: #fff;background: #b457ff;", res);
+  }, []);
+
   const [showArr, setShowArr] = useState<string[]>([]);
   useEffect(() => {
     if (debouncedValue) {
@@ -63,20 +74,13 @@ const Dictionary = () => {
   }, [debouncedValue, getResult]);
 
   const handleToggleFilter = async (currentItem) => {
-    // const newSearchArr = searchArr.map((item) => {
-    //   if (item.value === currentItem.value) {
-    //     item.checked = !item.checked;
-    //   }
-    //   return item;
-    // });
-    // setSearchArr(newSearchArr);
-    const res = await HttpRequest<IdiomListGetReq, IdiomListGetRes["data"]>({
-      url: IdiomApi.getList,
-      data: {
-        word: "一",
-      },
+    const newSearchArr = searchArr.map((item) => {
+      if (item.value === currentItem.value) {
+        item.checked = !item.checked;
+      }
+      return item;
     });
-    console.log("%c zjs res:", "color: #fff;background: #b457ff;", res);
+    setSearchArr(newSearchArr);
   };
 
   const isSearching = !!debouncedValue;
