@@ -3,9 +3,15 @@ import { View, Text } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import pinyin from "pinyin";
 import { AtSearchBar, AtTag } from "taro-ui";
+import HttpRequest from "../../config/request";
+import { IdiomApi } from "../../api";
 import { AllIdiomList } from "../../config/idiom";
 import { useDebounce } from "../../hooks";
 import styles from "./index.module.less";
+import type {
+  IdiomListGetReq,
+  IdiomListGetRes,
+} from "../../../types/http-types/idiom-list";
 
 const AllIdiomListWithPinyin = AllIdiomList.map((item) => ({
   value: item,
@@ -64,9 +70,11 @@ const Dictionary = () => {
     //   return item;
     // });
     // setSearchArr(newSearchArr);
-    const res = await Taro.request({
-      url: "https://zhengjinshou.cn/cidian-api/idiom/list",
-      mode: "cors",
+    const res = await HttpRequest<IdiomListGetReq, IdiomListGetRes["data"]>({
+      url: IdiomApi.getList,
+      data: {
+        word: "一",
+      },
     });
     console.log("%c zjs res:", "color: #fff;background: #b457ff;", res);
   };
