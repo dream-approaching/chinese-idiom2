@@ -1,4 +1,4 @@
-interface IdiomListGetReqCommon {
+export type IdiomListGetReq = {
   /**
    * 页码 默认1
    */
@@ -11,27 +11,19 @@ interface IdiomListGetReqCommon {
    * 是否首位
    */
   isFirst?: string;
-}
-
-export interface IdiomListGetReq1 extends IdiomListGetReqCommon {
   /**
    * 查询汉字
    */
   word?: string;
-}
-
-export interface IdiomListGetReq2 extends IdiomListGetReqCommon {
   /**
    * 查询拼音
    */
   pinyin?: string;
-}
-
-export type IdiomListGetReq = IdiomListGetReq1 | IdiomListGetReq2;
+};
 
 export interface IdiomListGetRes {
   code: number;
-  data: null | {
+  data: {
     list: {
       /**
        * 出处

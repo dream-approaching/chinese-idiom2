@@ -1,122 +1,99 @@
-import { useState, useEffect, useCallback } from "react";
-import { View, Text } from "@tarojs/components";
-import Taro from "@tarojs/taro";
-import pinyin from "pinyin";
-import { AtSearchBar, AtTag } from "taro-ui";
-import HttpRequest from "../../config/request";
-import { IdiomApi } from "../../api";
-import { AllIdiomList } from "../../config/idiom";
-import { useDebounce } from "../../hooks";
-import styles from "./index.module.less";
-import type {
-  IdiomListGetReq,
-  IdiomListGetRes,
-} from "../../../types/http-types/idiom-list";
+import { useState, useEffect, useCallback } from 'react';
+import { View, Text } from '@tarojs/components';
+import { IdiomItem } from '@/components/index';
+import HttpRequest from '@/config/request';
+import type { IdiomListGetReq, IdiomListGetRes } from '@/types/http-types/idiom-list';
+import pinyin from 'pinyin';
+import { AtSearchBar, AtTag } from 'taro-ui';
+import { IdiomApi } from '@/api/index';
+import { useDebounce } from '@/hooks/index';
+import styles from './index.module.less';
 
-const AllIdiomListWithPinyin = AllIdiomList.map((item) => ({
-  value: item,
-  pinyin: pinyin(item, { style: pinyin.STYLE_NORMAL })[0]?.[0],
-}));
+const FilterMap = { blur: 1, firstWord: 2, firstPinyin: 3 };
+const DEFAULT_FILTER = [
+  { name: '模糊匹配', value: FilterMap.blur },
+  { name: '首字匹配', value: FilterMap.firstWord },
+  { name: '首音节匹配', value: FilterMap.firstPinyin },
+];
 const Dictionary = () => {
-  const [searchValue, setSearchValue] = useState("");
+  const [searchValue, setSearchValue] = useState('');
   const debouncedValue = useDebounce<string>(searchValue, 500);
 
-  const handleChange = (value) => {
-    setSearchValue(value);
+  const handleChange = (value: string) => {
+    setSearchValue(value.trim().slice(0, 8));
   };
 
-  const [searchArr, setSearchArr] = useState([
-    { name: "首音节相同", value: 1, checked: false },
-    { name: "首字相同", value: 2, checked: false },
-  ]);
+  const [activeFilter, setActiveFilter] = useState(FilterMap.blur);
 
-  const getResult = useCallback(() => {
-    const firstLetter = debouncedValue[0];
-    let filterArr: string[] = [];
-    const isPinYin = searchArr.find((item) => item.value === 1)?.checked;
-    const isWord = searchArr.find((item) => item.value === 2)?.checked;
-    if (isPinYin) {
-      // 搜索框第一个字的拼音
-      const searchValueFirstPinyin = pinyin(debouncedValue, {
-        style: pinyin.STYLE_NORMAL,
-      })[0][0];
-      AllIdiomListWithPinyin.forEach((item) => {
-        if (item.pinyin === searchValueFirstPinyin) {
-          filterArr.push(item.value);
-        }
+  const getIdiomList = useCallback(async (params: IdiomListGetReq) => {
+    try {
+      const res = await HttpRequest<IdiomListGetReq, IdiomListGetRes['data']>({
+        url: IdiomApi.getList,
+        data: { ...params, pageSize: 20 },
       });
-    } else if (isWord) {
-      filterArr = AllIdiomList.filter((item) => item[0] === firstLetter);
-    } else {
-      filterArr = AllIdiomList.filter(
-        (item) => item.indexOf(debouncedValue) > -1
-      );
+      return res?.list;
+    } catch (error) {
+      console.error('%c IdiomApi.getList error:', 'color: #fff;background: #b457ff;', error);
+      return [];
     }
-    setShowArr(filterArr);
-  }, [debouncedValue, searchArr]);
-
-  const getIdiomList = useCallback(async () => {
-    const res = await HttpRequest<IdiomListGetReq, IdiomListGetRes["data"]>({
-      url: IdiomApi.getList,
-      data: {
-        word: "一",
-      },
-    });
-    return res?.list;
-    console.log("%c zjs res:", "color: #fff;background: #b457ff;", res);
   }, []);
 
-  const [showArr, setShowArr] = useState<string[]>([]);
+  const handleSearchList = useCallback(async () => {
+    const firstLetter = debouncedValue[0];
+
+    const params: IdiomListGetReq = {};
+    if (activeFilter === FilterMap.firstPinyin) {
+      // 首音节匹配
+      const searchValueFirstPinyin = pinyin(debouncedValue)[0][0];
+
+      params.pinyin = searchValueFirstPinyin;
+      params.isFirst = '1';
+    } else if (activeFilter === FilterMap.firstWord) {
+      // 首字匹配
+      params.word = firstLetter;
+      params.isFirst = '1';
+    } else {
+      // 模糊匹配
+      params.word = debouncedValue;
+    }
+    const res = await getIdiomList(params);
+    setShowArr(res);
+  }, [debouncedValue, getIdiomList, activeFilter]);
+
+  const [showArr, setShowArr] = useState<IdiomListGetRes['data']['list']>([]);
   useEffect(() => {
     if (debouncedValue) {
-      getResult();
+      handleSearchList();
     }
-  }, [debouncedValue, getResult]);
+  }, [debouncedValue, handleSearchList]);
 
   const handleToggleFilter = async (currentItem) => {
-    const newSearchArr = searchArr.map((item) => {
-      if (item.value === currentItem.value) {
-        item.checked = !item.checked;
-      }
-      return item;
-    });
-    setSearchArr(newSearchArr);
+    if (currentItem.value === activeFilter) return;
+    setActiveFilter(currentItem.value);
   };
 
   const isSearching = !!debouncedValue;
   return (
     <View className="index">
-      <AtSearchBar
-        value={searchValue}
-        onChange={handleChange}
-        onActionClick={getResult}
-      />
+      <AtSearchBar value={searchValue} onChange={handleChange} onActionClick={handleSearchList} />
       <View className={styles.tagCon}>
-        {searchArr.map((item) => {
+        {DEFAULT_FILTER.map((item) => {
           return (
-            <AtTag
-              circle
-              size="small"
-              key={item.value}
-              active={item.checked}
-              className={styles.tag}
-              onClick={() => handleToggleFilter(item)}
-            >
+            <AtTag circle size="small" key={item.value} active={item.value === activeFilter} className={styles.tag} onClick={() => handleToggleFilter(item)}>
               {item.name}
             </AtTag>
           );
         })}
       </View>
-      {isSearching && showArr.length > 0 && (
-        <Text className={styles.title}>搜索结果</Text>
-      )}
+      {isSearching && showArr.length > 0 && <Text className={styles.title}>搜索结果</Text>}
+      <IdiomItem />
       {isSearching && (
         <View className={styles.showArrCon}>
           {showArr.length ? (
             showArr.map((item, index) => {
               return (
                 <AtTag className={styles.showArrItem} key={index}>
-                  {item}
+                  {item.word}
                 </AtTag>
               );
             })
