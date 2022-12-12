@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, Text } from '@tarojs/components';
-import { IdiomItem } from '@/components/index';
+import { View } from '@tarojs/components';
+import { IdiomItem, Empty } from '@/components/index';
 import HttpRequest from '@/config/request';
 import pinyin from 'pinyin';
 import { AtSearchBar, AtTag } from 'taro-ui';
@@ -16,11 +16,15 @@ const DEFAULT_FILTER = [
   { name: '首音节匹配', value: FilterMap.firstPinyin },
 ];
 const Dictionary = () => {
-  const [searchValue, setSearchValue] = useState('一');
+  const [searchValue, setSearchValue] = useState('');
   const debouncedValue = useDebounce<string>(searchValue, 500);
 
-  const handleChange = (value: string) => {
+  const handleChangeValue = (value: string) => {
     setSearchValue(value.trim().slice(0, 8));
+  };
+
+  const handleClearValue = () => {
+    setSearchValue('');
   };
 
   const [activeFilter, setActiveFilter] = useState(FilterMap.blur);
@@ -74,8 +78,8 @@ const Dictionary = () => {
 
   const isSearching = !!debouncedValue;
   return (
-    <View className="index">
-      <AtSearchBar value={searchValue} onChange={handleChange} onActionClick={handleSearchList} />
+    <View className={styles.dictionaryCon}>
+      <AtSearchBar value={searchValue} fixed maxLength={10} onClear={handleClearValue} onChange={handleChangeValue} onActionClick={handleSearchList} />
       <View className={styles.tagCon}>
         {DEFAULT_FILTER.map((item) => {
           return (
@@ -92,7 +96,7 @@ const Dictionary = () => {
               return <IdiomItem key={index} item={item} />;
             })
           ) : (
-            <Text className={styles.noResult}>暂无结果</Text>
+            <Empty />
           )}
         </View>
       )}
