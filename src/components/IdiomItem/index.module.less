@@ -1,0 +1,71 @@
+.collapseCon {
+  width: 100%;
+  padding: 12px 24px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  .leftCon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: #fff;
+    overflow: hidden;
+    word-break: break-all;
+    white-space: pre-wrap;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    .avatarText {
+      font-size: 20px;
+      line-height: 20px;
+    }
+  }
+  .rightCon {
+    flex: 1;
+    margin-left: 12px;
+    .titleCon {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .titleText {
+        font-size: 34px;
+        color: #333;
+        font-weight: 500;
+      }
+      .icon {
+        width: 36px;
+        height: 36px;
+        transition: transform 0.5s;
+        opacity: 0.7;
+      }
+      .openIcon {
+        transform: rotate(180deg);
+      }
+    }
+    .contentCon {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-in-out;
+      .content {
+        padding: 6px 24px;
+        line-height: 40px;
+        .contextKey {
+          font-size: 24px;
+          color: #555;
+          font-weight: 600;
+        }
+        .contextValue {
+          font-size: 24px;
+          color: #777;
+          word-break: break-all;
+          white-space: pre-wrap;
+        }
+      }
+    }
+    .showAll {
+      max-height: 800px;
+    }
+  }
+}

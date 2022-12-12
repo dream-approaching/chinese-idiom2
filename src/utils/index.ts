@@ -43,3 +43,5 @@ export function debounce(func, wait = 500, immediate = false) {
     }
   };
 }
+
+export { generalColorByStr } from './genColor';

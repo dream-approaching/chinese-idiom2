@@ -76,13 +76,7 @@ const config = {
     }
   },
   alias: {
-    '@/api': resolve(__dirname, '..', 'src/api'),
-    '@/components': resolve(__dirname, '..', 'src/components'),
-    '@/config': resolve(__dirname, '..', 'src/config'),
-    '@/hooks': resolve(__dirname, '..', 'src/hooks'),
-    '@/pages': resolve(__dirname, '..', 'src/pages'),
-    '@/utils': resolve(__dirname, '..', 'src/utils'),
-    '@/types': resolve(__dirname, '..', 'types'),
+    '@': resolve(__dirname, '..', 'src'),
   }
 }
 

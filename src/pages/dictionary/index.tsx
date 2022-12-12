@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { View, Text } from '@tarojs/components';
 import { IdiomItem } from '@/components/index';
 import HttpRequest from '@/config/request';
-import type { IdiomListGetReq, IdiomListGetRes } from '@/types/http-types/idiom-list';
 import pinyin from 'pinyin';
 import { AtSearchBar, AtTag } from 'taro-ui';
 import { IdiomApi } from '@/api/index';
 import { useDebounce } from '@/hooks/index';
+import type { IdiomListGetReq, IdiomListGetRes } from '@/types/http-types/idiom-list';
 import styles from './index.module.less';
 
 const FilterMap = { blur: 1, firstWord: 2, firstPinyin: 3 };
@@ -16,7 +16,7 @@ const DEFAULT_FILTER = [
   { name: '首音节匹配', value: FilterMap.firstPinyin },
 ];
 const Dictionary = () => {
-  const [searchValue, setSearchValue] = useState('');
+  const [searchValue, setSearchValue] = useState('一');
   const debouncedValue = useDebounce<string>(searchValue, 500);
 
   const handleChange = (value: string) => {
@@ -85,17 +85,11 @@ const Dictionary = () => {
           );
         })}
       </View>
-      {isSearching && showArr.length > 0 && <Text className={styles.title}>搜索结果</Text>}
-      <IdiomItem />
       {isSearching && (
         <View className={styles.showArrCon}>
           {showArr.length ? (
             showArr.map((item, index) => {
-              return (
-                <AtTag className={styles.showArrItem} key={index}>
-                  {item.word}
-                </AtTag>
-              );
+              return <IdiomItem key={index} item={item} />;
             })
           ) : (
             <Text className={styles.noResult}>暂无结果</Text>
