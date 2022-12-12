@@ -90,7 +90,7 @@ const Dictionary = () => {
         })}
       </View>
       {isSearching && (
-        <View className={styles.showArrCon}>
+        <View className={styles.listCon}>
           {showArr.length ? (
             showArr.map((item, index) => {
               return <IdiomItem key={index} item={item} />;
