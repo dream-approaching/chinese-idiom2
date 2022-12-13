@@ -33,7 +33,7 @@ const Dictionary = () => {
     try {
       const res = await HttpRequest<IdiomListGetReq, IdiomListGetRes['data']>({
         url: IdiomApi.getList,
-        data: { ...params, pageSize: 20 },
+        data: { ...params, pageSize: 10 },
       });
       return res?.list;
     } catch (error) {

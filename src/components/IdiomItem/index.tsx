@@ -5,7 +5,7 @@ import type { IdiomListGetRes } from '@/types/http-types/idiom-list';
 import styles from './index.module.less';
 
 export default function IdiomItem({ item }: { item: IdiomListGetRes['data']['list'][0] }) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   const contentArr = [
     { key: '拼音', value: item.pinyin },
