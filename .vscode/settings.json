@@ -1,4 +1,3 @@
 {
-  "editor.formatOnSave": true,
-  "html.format.wrapLineLength": 220
+  "editor.formatOnSave": true
 }

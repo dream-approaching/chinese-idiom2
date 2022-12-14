@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View } from '@tarojs/components';
+import { View, ScrollView } from '@tarojs/components';
 import { IdiomItem, Empty } from '@/components/index';
 import HttpRequest from '@/config/request';
 import pinyin from 'pinyin';
 import { AtSearchBar, AtTag } from 'taro-ui';
 import { IdiomApi } from '@/api/index';
-import { useDebounce } from '@/hooks/index';
+import { useDebounce } from 'use-debounce';
 import type { IdiomListGetReq, IdiomListGetRes } from '@/types/http-types/idiom-list';
 import styles from './index.module.less';
 
@@ -16,8 +16,9 @@ const DEFAULT_FILTER = [
   { name: '首音节匹配', value: FilterMap.firstPinyin },
 ];
 const Dictionary = () => {
-  const [searchValue, setSearchValue] = useState('');
-  const debouncedValue = useDebounce<string>(searchValue, 500);
+  const [searchValue, setSearchValue] = useState('一');
+  const [debouncedValue] = useDebounce<string>(searchValue, 500);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleChangeValue = (value: string) => {
     setSearchValue(value.trim().slice(0, 8));
@@ -42,10 +43,14 @@ const Dictionary = () => {
     }
   }, []);
 
-  const handleSearchList = useCallback(async () => {
+  // 搜索列表
+  useEffect(() => {
+    if (!debouncedValue) {
+      return setShowArr([]);
+    }
     const firstLetter = debouncedValue[0];
 
-    const params: IdiomListGetReq = {};
+    const params: IdiomListGetReq = { page: currentPage };
     if (activeFilter === FilterMap.firstPinyin) {
       // 首音节匹配
       const searchValueFirstPinyin = pinyin(debouncedValue)[0][0];
@@ -60,26 +65,38 @@ const Dictionary = () => {
       // 模糊匹配
       params.word = debouncedValue;
     }
-    const res = await getIdiomList(params);
-    setShowArr(res);
-  }, [debouncedValue, getIdiomList, activeFilter]);
+    getIdiomList(params).then((res) => {
+      if (currentPage === 1) {
+        setShowArr(res);
+        return;
+      } else {
+        setShowArr((prev) => [...prev, ...res]);
+      }
+    });
+  }, [debouncedValue, getIdiomList, activeFilter, currentPage]);
 
   const [showArr, setShowArr] = useState<IdiomListGetRes['data']['list']>([]);
   useEffect(() => {
     if (debouncedValue) {
-      handleSearchList();
+      setCurrentPage(1); // 搜索时重置页码
     }
-  }, [debouncedValue, handleSearchList]);
+  }, [debouncedValue]);
 
   const handleToggleFilter = async (currentItem) => {
     if (currentItem.value === activeFilter) return;
+    setCurrentPage(1); // 切换过滤器时重置页码
     setActiveFilter(currentItem.value);
+  };
+
+  // 页面滚动到底部
+  const onScrollToLower = () => {
+    setCurrentPage(currentPage + 1); // 页码加1
   };
 
   const isSearching = !!debouncedValue;
   return (
     <View className={styles.dictionaryCon}>
-      <AtSearchBar value={searchValue} fixed maxLength={10} onClear={handleClearValue} onChange={handleChangeValue} onActionClick={handleSearchList} />
+      <AtSearchBar value={searchValue} fixed maxLength={10} onClear={handleClearValue} onChange={handleChangeValue} />
       <View className={styles.tagCon}>
         {DEFAULT_FILTER.map((item) => {
           return (
@@ -90,7 +107,16 @@ const Dictionary = () => {
         })}
       </View>
       {isSearching && (
-        <View className={styles.listCon}>
+        <ScrollView
+          enhanced
+          pagingEnabled
+          scrollY
+          scrollWithAnimation
+          lowerThreshold={40}
+          upperThreshold={40}
+          onScrollToLower={onScrollToLower}
+          className={styles.listCon}
+        >
           {showArr.length ? (
             showArr.map((item, index) => {
               return <IdiomItem key={index} item={item} />;
@@ -98,7 +124,7 @@ const Dictionary = () => {
           ) : (
             <Empty />
           )}
-        </View>
+        </ScrollView>
       )}
     </View>
   );
