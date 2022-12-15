@@ -1,3 +1,5 @@
+import type { TypeIdiomItem } from './common';
+
 export type IdiomListGetReq = {
   /**
    * 页码 默认1
@@ -24,32 +26,7 @@ export type IdiomListGetReq = {
 export interface IdiomListGetRes {
   code: number;
   data: {
-    list: {
-      /**
-       * 出处
-       */
-      derivation: string;
-      /**
-       * 例子
-       */
-      example: string;
-      /**
-       * 释义
-       */
-      explanation: string;
-      /**
-       * 拼音
-       */
-      pinyin: string;
-      /**
-       * 汉字
-       */
-      word: string;
-      /**
-       * 首字母
-       */
-      abbreviation: string;
-    }[];
+    list: TypeIdiomItem[];
     total: number;
   };
   message: string;

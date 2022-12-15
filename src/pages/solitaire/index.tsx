@@ -1,51 +1,76 @@
-import { Component } from "react";
-import { View, Text, Input } from "@tarojs/components";
-import pinyin from "pinyin";
-import { AllIdiomList } from "../../config/idiom";
+import { useState, useEffect, useCallback } from 'react';
+import { View } from '@tarojs/components';
+import HttpRequest from '@/config/request';
+import pinyin from 'pinyin';
+import { AtSearchBar, AtToast } from 'taro-ui';
+import Taro from '@tarojs/taro';
+import { IdiomApi } from '@/api/index';
+import { getPinYinByWord } from '@/utils/index';
+import type { IdiomSolitaireRobotReq, IdiomSolitaireRobotRes } from '@/types/http-types/idiom-solitaire-robot';
+import styles from './index.module.less';
 
-import "./index.less";
+const Solitaire = () => {
+  const [submitValue, setSubmitValue] = useState('抱头鼠窜');
 
-export default class Index extends Component {
-  componentWillMount() {}
-
-  componentDidMount() {
-    console.log("%c zjs pinyin:", "color: #fff;background: #b457ff;", pinyin);
-  }
-
-  componentWillUnmount() {}
-
-  componentDidShow() {}
-
-  componentDidHide() {}
-
-  handleInput = (customEvent) => {
-    console.log(
-      "%c zjs value:",
-      "color: #fff;background: #b457ff;",
-      customEvent.detail.value
-    );
-    const firstLetter = customEvent.detail.value[0];
-    console.log(
-      "%c zjs firstLetter:",
-      "color: #fff;background: #b457ff;",
-      firstLetter
-    );
-    const filterArr = AllIdiomList.filter((item) => item[0] === firstLetter);
-    console.log(
-      "%c zjs filterArr:",
-      "color: #fff;background: #b457ff;",
-      filterArr
-    );
-    // pinyin(firstLetter)
-    // console.log('%c zjs pinyin(firstLetter):', 'color: #fff;background: #b457ff;', pinyin(firstLetter || ''));
+  const handleChangeValue = (value: string) => {
+    setSubmitValue(value.trim().slice(0, 20));
   };
 
-  render() {
-    return (
-      <View className="index">
-        <Text>成语接龙</Text>
-        <Input onInput={this.handleInput}></Input>
-      </View>
-    );
-  }
-}
+  const handleClearValue = () => {
+    setSubmitValue('');
+  };
+
+  const [currentSolitaireList, setCurrentSolitaireList] = useState<string[]>([]);
+
+  const submitSolitaireAction = useCallback(async (params: IdiomSolitaireRobotReq) => {
+    try {
+      const res = await HttpRequest<IdiomSolitaireRobotReq, IdiomSolitaireRobotRes['data']>({
+        url: IdiomApi.solitaireWithRobot,
+        data: { ...params },
+      });
+      return res;
+    } catch (error) {
+      console.error('%c IdiomApi.getList error:', 'color: #fff;background: #b457ff;', error);
+      return [];
+    }
+  }, []);
+
+  const handleSubmitSolitaire = () => {
+    if (submitValue.length < 4) {
+      Taro.showToast({ title: '成语长度不够哦' });
+    }
+    console.log('%c zjs setSearchValue:', 'color: #fff;background: #b457ff;', submitValue);
+
+    const currentPinyin = getPinYinByWord(submitValue, { isFirst: true }); // 提交的成语的拼音
+    console.log('%c zjs currentPinyin:', 'color: #fff;background: #b457ff;', currentPinyin);
+
+    if (currentSolitaireList.length) {
+      const lastIdiom = currentSolitaireList[currentSolitaireList.length - 1];
+      const lastPinyin = getPinYinByWord(lastIdiom, { isLast: true }); // 最后一个成语的拼音
+      console.log('%c zjs lastPinyin:', 'color: #fff;background: #b457ff;', lastPinyin);
+      if (currentPinyin !== lastPinyin) {
+        Taro.showToast({ title: '成语不符合规则哦' });
+        return;
+      }
+    } else {
+      // 随机返回一个成语给客户端
+      submitSolitaireAction({ word: submitValue, pinyin: getPinYinByWord(submitValue, { isLast: true }) }).then((res) => {
+        console.log('%c zjs res:', 'color: #fff;background: #b457ff;', res);
+      });
+    }
+  };
+
+  console.log(getPinYinByWord('成语'));
+  console.log(getPinYinByWord('成语', { isFirst: true }));
+  console.log(getPinYinByWord('成语', { isLast: true }));
+  return (
+    <View className={styles.solitaireCon}>
+      <AtSearchBar value={submitValue} fixed maxLength={20} onClear={handleClearValue} onChange={handleChangeValue} onActionClick={handleSubmitSolitaire} />
+      {currentSolitaireList.map((item) => (
+        <span key={item}>{item}</span>
+      ))}
+    </View>
+  );
+};
+
+export default Solitaire;

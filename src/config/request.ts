@@ -1,7 +1,7 @@
-import Taro from "@tarojs/taro";
-import type TaroType from "@tarojs/taro/types";
-import dayjs from "dayjs";
-import { GlobalConfig } from "./config";
+import Taro from '@tarojs/taro';
+import type TaroType from '@tarojs/taro/types';
+import dayjs from 'dayjs';
+import { GlobalConfig } from './config';
 
 type TypeHttpRes<T> = {
   code: number;
@@ -18,17 +18,18 @@ export default <Q, S>(options: TaroType.request.Option<any, Q>) => {
   const prefix = `1670${getRandomNum(10, 99)}`;
   const addonAfter = getRandomNum(111111, 999999);
 
-  return new Promise<TypeHttpRes<S>["data"]>((resolve, reject) => {
+  return new Promise<TypeHttpRes<S>['data']>((resolve, reject) => {
     Taro.request({
-      url: GlobalConfig.baseUrl + GlobalConfig.apiPrefix + options.url,
+      // url: GlobalConfig.baseUrl + GlobalConfig.apiPrefix + options.url,
+      url: GlobalConfig.apiPrefix + options.url,
       method: options.method,
       data: {
         ...options.data,
         sign: `${prefix}${dayjs().valueOf()}${addonAfter}`,
       },
-      mode: "cors",
+      mode: 'cors',
       header: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
     })
       .then((res: TaroType.request.SuccessCallbackResult<TypeHttpRes<S>>) => {
@@ -37,7 +38,7 @@ export default <Q, S>(options: TaroType.request.Option<any, Q>) => {
           if (data.code !== 200) {
             Taro.showToast({
               title: `${res.data.message}~`,
-              icon: "none",
+              icon: 'none',
               mask: true,
             });
           }

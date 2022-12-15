@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView } from '@tarojs/components';
+import { View, ScrollView, Text } from '@tarojs/components';
 import { IdiomItem, Empty } from '@/components/index';
 import HttpRequest from '@/config/request';
 import pinyin from 'pinyin';
@@ -16,9 +16,11 @@ const DEFAULT_FILTER = [
   { name: '首音节匹配', value: FilterMap.firstPinyin },
 ];
 const Dictionary = () => {
-  const [searchValue, setSearchValue] = useState('一');
+  const [searchValue, setSearchValue] = useState('窜');
   const [debouncedValue] = useDebounce<string>(searchValue, 500);
   const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const handleChangeValue = (value: string) => {
     setSearchValue(value.trim().slice(0, 8));
@@ -32,14 +34,18 @@ const Dictionary = () => {
 
   const getIdiomList = useCallback(async (params: IdiomListGetReq) => {
     try {
+      setLoading(true);
       const res = await HttpRequest<IdiomListGetReq, IdiomListGetRes['data']>({
         url: IdiomApi.getList,
         data: { ...params, pageSize: 10 },
       });
-      return res?.list;
+      setTotal(res?.total || 0);
+      return res?.list || [];
     } catch (error) {
       console.error('%c IdiomApi.getList error:', 'color: #fff;background: #b457ff;', error);
       return [];
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -53,7 +59,7 @@ const Dictionary = () => {
     const params: IdiomListGetReq = { page: currentPage };
     if (activeFilter === FilterMap.firstPinyin) {
       // 首音节匹配
-      const searchValueFirstPinyin = pinyin(debouncedValue)[0][0];
+      const searchValueFirstPinyin = pinyin(debouncedValue, { style: pinyin.STYLE_NORMAL })[0][0];
 
       params.pinyin = searchValueFirstPinyin;
       params.isFirst = '1';
@@ -76,6 +82,7 @@ const Dictionary = () => {
   }, [debouncedValue, getIdiomList, activeFilter, currentPage]);
 
   const [showArr, setShowArr] = useState<IdiomListGetRes['data']['list']>([]);
+
   useEffect(() => {
     if (debouncedValue) {
       setCurrentPage(1); // 搜索时重置页码
@@ -90,10 +97,13 @@ const Dictionary = () => {
 
   // 页面滚动到底部
   const onScrollToLower = () => {
+    if (loading) return; // 正在加载中
+    if (showArr.length >= total) return; // 已加载完所有数据
     setCurrentPage(currentPage + 1); // 页码加1
   };
 
   const isSearching = !!debouncedValue;
+  console.log('%c zjs showArr:', 'color: #fff;background: #b457ff;', showArr);
   return (
     <View className={styles.dictionaryCon}>
       <AtSearchBar value={searchValue} fixed maxLength={10} onClear={handleClearValue} onChange={handleChangeValue} />
@@ -118,9 +128,12 @@ const Dictionary = () => {
           className={styles.listCon}
         >
           {showArr.length ? (
-            showArr.map((item, index) => {
-              return <IdiomItem key={index} item={item} />;
-            })
+            <>
+              {showArr.map((item, index) => {
+                return <IdiomItem key={index} item={item} />;
+              })}
+              <View className={styles.bottomTips}>{loading ? '加载中...' : showArr.length >= total ? '没有更多了' : ''}</View>
+            </>
           ) : (
             <Empty />
           )}
