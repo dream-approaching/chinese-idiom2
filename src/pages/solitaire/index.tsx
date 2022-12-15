@@ -47,7 +47,7 @@ const Solitaire = () => {
 
   const handleSubmitSolitaire = () => {
     if (submitValue.length < 4) {
-      Taro.showToast({ title: '成语长度不够哦', icon: 'none' });
+      return Taro.showToast({ title: '成语长度不够哦', icon: 'none' });
     }
 
     const currentPinyin = getPinYinByWord(submitValue, { isFirst: true }); // 提交的成语的拼音
@@ -68,10 +68,10 @@ const Solitaire = () => {
     }
   };
 
-  console.log('%c zjs currentSolitaireList:', 'color: #fff;background: #b457ff;', currentSolitaireList);
   return (
     <View className={styles.solitaireCon}>
       <AtSearchBar value={submitValue} maxLength={20} onClear={handleClearValue} onChange={handleChangeValue} onActionClick={handleSubmitSolitaire} />
+      <Text>游戏规则：成语的最后一个字和下一个成语的第一个字必须相同，且成语长度必须大于等于4个字</Text>
       <View>
         {currentSolitaireList.map((item, index) => (
           <Text key={index}>{item.word}--</Text>
