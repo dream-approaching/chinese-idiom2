@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView, Text } from '@tarojs/components';
+import { View, ScrollView } from '@tarojs/components';
 import { IdiomItem, Empty } from '@/components/index';
 import HttpRequest from '@/config/request';
 import pinyin from 'pinyin';

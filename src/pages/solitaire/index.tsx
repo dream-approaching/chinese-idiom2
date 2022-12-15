@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { View } from '@tarojs/components';
+import { View, Text } from '@tarojs/components';
 import HttpRequest from '@/config/request';
 import pinyin from 'pinyin';
 import { AtSearchBar, AtToast } from 'taro-ui';
@@ -8,6 +8,8 @@ import { IdiomApi } from '@/api/index';
 import { getPinYinByWord } from '@/utils/index';
 import type { IdiomSolitaireRobotReq, IdiomSolitaireRobotRes } from '@/types/http-types/idiom-solitaire-robot';
 import styles from './index.module.less';
+
+const IdiomBelong = { user: '用户', robot: '机器人' };
 
 const Solitaire = () => {
   const [submitValue, setSubmitValue] = useState('抱头鼠窜');
@@ -20,55 +22,61 @@ const Solitaire = () => {
     setSubmitValue('');
   };
 
-  const [currentSolitaireList, setCurrentSolitaireList] = useState<string[]>([]);
+  const [currentSolitaireList, setCurrentSolitaireList] = useState<{ belong: string; effect: boolean; word: string }[]>([]);
 
-  const submitSolitaireAction = useCallback(async (params: IdiomSolitaireRobotReq) => {
-    try {
-      const res = await HttpRequest<IdiomSolitaireRobotReq, IdiomSolitaireRobotRes['data']>({
-        url: IdiomApi.solitaireWithRobot,
-        data: { ...params },
-      });
-      return res;
-    } catch (error) {
-      console.error('%c IdiomApi.getList error:', 'color: #fff;background: #b457ff;', error);
-      return [];
-    }
-  }, []);
+  const submitSolitaireAction = useCallback(
+    async (params: IdiomSolitaireRobotReq) => {
+      try {
+        setCurrentSolitaireList((prev) => [...prev, { belong: IdiomBelong.user, effect: true, word: submitValue }]);
+        const res = await HttpRequest<IdiomSolitaireRobotReq, IdiomSolitaireRobotRes['data']>({
+          url: IdiomApi.solitaireWithRobot,
+          data: { ...params },
+        });
+        setSubmitValue('');
+        setTimeout(() => {
+          setCurrentSolitaireList((prev) => [...prev, { belong: IdiomBelong.robot, effect: true, word: res.list[0].word }]);
+        }, 200);
+      } catch (error) {
+        const newList = currentSolitaireList.slice(0, -1);
+        setCurrentSolitaireList([...newList, { belong: IdiomBelong.user, effect: false, word: submitValue }]);
+        console.error('%c IdiomApi.getList error:', 'color: #fff;background: #b457ff;', error);
+      }
+    },
+    [submitValue, currentSolitaireList]
+  );
 
   const handleSubmitSolitaire = () => {
     if (submitValue.length < 4) {
-      Taro.showToast({ title: '成语长度不够哦' });
+      Taro.showToast({ title: '成语长度不够哦', icon: 'none' });
     }
-    console.log('%c zjs setSearchValue:', 'color: #fff;background: #b457ff;', submitValue);
 
     const currentPinyin = getPinYinByWord(submitValue, { isFirst: true }); // 提交的成语的拼音
-    console.log('%c zjs currentPinyin:', 'color: #fff;background: #b457ff;', currentPinyin);
 
     if (currentSolitaireList.length) {
-      const lastIdiom = currentSolitaireList[currentSolitaireList.length - 1];
-      const lastPinyin = getPinYinByWord(lastIdiom, { isLast: true }); // 最后一个成语的拼音
-      console.log('%c zjs lastPinyin:', 'color: #fff;background: #b457ff;', lastPinyin);
+      const effectList = currentSolitaireList.filter((item) => item.effect); // 有效成语列表
+      const lastIdiom = effectList[effectList.length - 1];
+      const lastPinyin = getPinYinByWord(lastIdiom.word, { isLast: true }); // 最后一个有效成语的拼音
+
       if (currentPinyin !== lastPinyin) {
-        Taro.showToast({ title: '成语不符合规则哦' });
+        Taro.showToast({ title: '成语不符合规则哦', icon: 'none' });
         return;
       }
+
+      submitSolitaireAction({ word: submitValue, pinyin: getPinYinByWord(submitValue, { isLast: true }) });
     } else {
-      // 随机返回一个成语给客户端
-      submitSolitaireAction({ word: submitValue, pinyin: getPinYinByWord(submitValue, { isLast: true }) }).then((res) => {
-        console.log('%c zjs res:', 'color: #fff;background: #b457ff;', res);
-      });
+      submitSolitaireAction({ word: submitValue, pinyin: getPinYinByWord(submitValue, { isLast: true }) });
     }
   };
 
-  console.log(getPinYinByWord('成语'));
-  console.log(getPinYinByWord('成语', { isFirst: true }));
-  console.log(getPinYinByWord('成语', { isLast: true }));
+  console.log('%c zjs currentSolitaireList:', 'color: #fff;background: #b457ff;', currentSolitaireList);
   return (
     <View className={styles.solitaireCon}>
-      <AtSearchBar value={submitValue} fixed maxLength={20} onClear={handleClearValue} onChange={handleChangeValue} onActionClick={handleSubmitSolitaire} />
-      {currentSolitaireList.map((item) => (
-        <span key={item}>{item}</span>
-      ))}
+      <AtSearchBar value={submitValue} maxLength={20} onClear={handleClearValue} onChange={handleChangeValue} onActionClick={handleSubmitSolitaire} />
+      <View>
+        {currentSolitaireList.map((item, index) => (
+          <Text key={index}>{item.word}--</Text>
+        ))}
+      </View>
     </View>
   );
 };
