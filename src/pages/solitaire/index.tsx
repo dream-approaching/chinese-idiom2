@@ -10,7 +10,7 @@ import { getPinYinByWord } from '@/utils/index';
 import type { IdiomSolitaireRobotReq, IdiomSolitaireRobotRes } from '@/types/http-types/idiom-solitaire-robot';
 import { IdiomBelong } from '@/config/constants';
 import styles from './index.module.less';
-import { SolitaireHeader } from './components';
+import { SolitaireHeader, GameStart } from './components';
 
 const Solitaire = () => {
   const [submitValue, setSubmitValue] = useState('抱头鼠窜');
@@ -90,21 +90,7 @@ const Solitaire = () => {
     <View className={styles.solitaireCon}>
       <SolitaireHeader currentSolitaireList={currentSolitaireList} />
 
-      <View className={styles.gameContent}>
-        {!isGameStart && (
-          <View className={styles.gameStartCon}>
-            <Text className={styles.gameStartTip}>你好，我是机器人小灵。欢迎来到成语接龙，点击下方按钮选择谁先开始</Text>
-            <View className={styles.gameStartCon}>
-              <View className={styles.gameStartBtn} onClick={() => handleStartGame(IdiomBelong.user)}>
-                我先
-              </View>
-              <View className={styles.gameStartBtn} onClick={() => handleStartGame(IdiomBelong.robot)}>
-                小灵先
-              </View>
-            </View>
-          </View>
-        )}
-      </View>
+      <View className={styles.gameContent}>{!isGameStart && <GameStart onGameStart={handleStartGame} />}</View>
       {/* <AtSearchBar value={submitValue} maxLength={20} onClear={handleClearValue} onChange={handleChangeValue} onActionClick={handleSubmitSolitaire} />
       <Text>游戏规则：成语的最后一个字和下一个成语的第一个字必须相同，且成语长度必须大于等于4个字</Text>
       <View>
