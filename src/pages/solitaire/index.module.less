@@ -1,4 +1,38 @@
 .solitaireCon {
+  .headerCardCon {
+    width: 100%;
+    height: 400px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
+    display: flex;
+    .leftPart {
+      flex: 2;
+      height: 100%;
+      padding: 22px;
+      .title {
+        font-size: 38px;
+        font-weight: 600;
+        display: block;
+        letter-spacing: 2px;
+      }
+      .rule {
+        font-size: 24px;
+        line-height: 30px;
+        display: block;
+        margin-top: 16px;
+        color: #fff;
+        white-space: pre-wrap;
+        word-break: break-all;
+        font-weight: lighter;
+      }
+    }
+    .rightPart {
+      flex: 1;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
   :global {
     .at-search-bar__input {
       padding-right: 0;
