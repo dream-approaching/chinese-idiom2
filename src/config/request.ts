@@ -20,8 +20,8 @@ export default <Q, S>(options: TaroType.request.Option<any, Q>) => {
 
   return new Promise<TypeHttpRes<S>['data']>((resolve, reject) => {
     Taro.request({
-      // url: GlobalConfig.baseUrl + GlobalConfig.apiPrefix + options.url,
-      url: GlobalConfig.apiPrefix + options.url,
+      url: GlobalConfig.baseUrl + GlobalConfig.apiPrefix + options.url,
+      // url: GlobalConfig.apiPrefix + options.url,
       method: options.method,
       data: {
         ...options.data,
