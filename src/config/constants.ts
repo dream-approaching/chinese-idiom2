@@ -1,1 +1,4 @@
-export const IdiomBelong = { user: '用户', robot: '机器人' };
+export enum IdiomBelong {
+  user = 'user',
+  robot = 'robot',
+}

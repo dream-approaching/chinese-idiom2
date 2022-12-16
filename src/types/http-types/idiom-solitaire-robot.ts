@@ -4,7 +4,7 @@ export type IdiomSolitaireRobotReq = {
   /**
    * 当前接龙的长度
    */
-  currentListLength?: string;
+  currentListLength?: number;
   /**
    * 当前提交的成语
    */

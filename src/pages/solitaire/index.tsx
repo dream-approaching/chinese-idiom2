@@ -8,10 +8,9 @@ import Taro from '@tarojs/taro';
 import { IdiomApi } from '@/api/index';
 import { getPinYinByWord } from '@/utils/index';
 import type { IdiomSolitaireRobotReq, IdiomSolitaireRobotRes } from '@/types/http-types/idiom-solitaire-robot';
+import { IdiomBelong } from '@/config/constants';
 import styles from './index.module.less';
 import { SolitaireHeader } from './components';
-
-const IdiomBelong = { user: '用户', robot: '机器人' };
 
 const Solitaire = () => {
   const [submitValue, setSubmitValue] = useState('抱头鼠窜');
@@ -27,17 +26,26 @@ const Solitaire = () => {
   const [currentSolitaireList, setCurrentSolitaireList] = useState<{ belong: string; effect: boolean; word: string }[]>([]);
 
   const submitSolitaireAction = useCallback(
-    async (params: IdiomSolitaireRobotReq) => {
+    async (params: IdiomSolitaireRobotReq, owner: keyof typeof IdiomBelong) => {
       try {
-        setCurrentSolitaireList((prev) => [...prev, { belong: IdiomBelong.user, effect: true, word: submitValue }]);
-        const res = await HttpRequest<IdiomSolitaireRobotReq, IdiomSolitaireRobotRes['data']>({
-          url: IdiomApi.solitaireWithRobot,
-          data: { ...params },
-        });
-        setSubmitValue('');
-        setTimeout(() => {
+        const isByUser = owner === IdiomBelong.user;
+        if (isByUser) {
+          setCurrentSolitaireList((prev) => [...prev, { belong: IdiomBelong.user, effect: true, word: submitValue }]);
+          const res = await HttpRequest<IdiomSolitaireRobotReq, IdiomSolitaireRobotRes['data']>({
+            url: IdiomApi.solitaireWithRobot,
+            data: { ...params },
+          });
+          setSubmitValue('');
+          setTimeout(() => {
+            setCurrentSolitaireList((prev) => [...prev, { belong: IdiomBelong.robot, effect: true, word: res.list[0].word }]);
+          }, 200);
+        } else {
+          const res = await HttpRequest<IdiomSolitaireRobotReq, IdiomSolitaireRobotRes['data']>({
+            url: IdiomApi.solitaireWithRobot,
+            data: { ...params },
+          });
           setCurrentSolitaireList((prev) => [...prev, { belong: IdiomBelong.robot, effect: true, word: res.list[0].word }]);
-        }, 200);
+        }
       } catch (error) {
         const newList = currentSolitaireList.slice(0, -1);
         setCurrentSolitaireList([...newList, { belong: IdiomBelong.user, effect: false, word: submitValue }]);
@@ -64,21 +72,39 @@ const Solitaire = () => {
         return;
       }
 
-      submitSolitaireAction({ word: submitValue, pinyin: getPinYinByWord(submitValue, { isLast: true }) });
+      submitSolitaireAction({ word: submitValue, pinyin: getPinYinByWord(submitValue, { isLast: true }) }, IdiomBelong.user);
     } else {
-      submitSolitaireAction({ word: submitValue, pinyin: getPinYinByWord(submitValue, { isLast: true }) });
+      submitSolitaireAction({ word: submitValue, pinyin: getPinYinByWord(submitValue, { isLast: true }) }, IdiomBelong.user);
     }
   };
 
   const [isGameStart, setIsGameStart] = useState(false);
+  const handleStartGame = (belong: string) => {
+    setIsGameStart(true);
+    if (belong === IdiomBelong.robot) {
+      submitSolitaireAction({ currentListLength: 0 }, IdiomBelong.robot);
+    }
+  };
 
   return (
     <View className={styles.solitaireCon}>
       <SolitaireHeader currentSolitaireList={currentSolitaireList} />
-      {/* {!isGameStart && (<View>
-        <View className={styles.startBtn} onClick={() => setIsGameStart(true)}>开始游戏</View>
-      </View>)} */}
-      <View className={styles.gameContent}></View>
+
+      <View className={styles.gameContent}>
+        {!isGameStart && (
+          <View className={styles.gameStartCon}>
+            <Text className={styles.gameStartTip}>你好，我是机器人小灵。欢迎来到成语接龙，点击下方按钮选择谁先开始</Text>
+            <View className={styles.gameStartCon}>
+              <View className={styles.gameStartBtn} onClick={() => handleStartGame(IdiomBelong.user)}>
+                我先
+              </View>
+              <View className={styles.gameStartBtn} onClick={() => handleStartGame(IdiomBelong.robot)}>
+                小灵先
+              </View>
+            </View>
+          </View>
+        )}
+      </View>
       {/* <AtSearchBar value={submitValue} maxLength={20} onClear={handleClearValue} onChange={handleChangeValue} onActionClick={handleSubmitSolitaire} />
       <Text>游戏规则：成语的最后一个字和下一个成语的第一个字必须相同，且成语长度必须大于等于4个字</Text>
       <View>
