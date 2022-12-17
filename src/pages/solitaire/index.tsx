@@ -3,18 +3,18 @@ import { View, Text, Image } from '@tarojs/components';
 import HttpRequest from '@/config/request';
 import pinyin from 'pinyin';
 import dayjs from 'dayjs';
-import { AtSearchBar, AtToast } from 'taro-ui';
 import Taro from '@tarojs/taro';
 import { IdiomApi } from '@/api/index';
-import { getPinYinByWord, genIdiomByWord } from '@/utils/index';
+import { getPinYinByWord, genIdiomByWord, generalColorByStr } from '@/utils/index';
 import type { IdiomSolitaireRobotReq, IdiomSolitaireRobotRes } from '@/types/http-types/idiom-solitaire-robot';
-import type { TypeIdiomItem } from '@/types/http-types/common';
+import type { TypeSolitaireItem } from '@/types/http-types/common';
+import { SolitaireItem, SolitaireInput } from '@/components';
 import { IdiomBelong } from '@/config/constants';
 import styles from './index.module.less';
 import { SolitaireHeader, GameStart } from './components';
 
 const Solitaire = () => {
-  const [submitValue, setSubmitValue] = useState('抱头鼠窜');
+  const [submitValue, setSubmitValue] = useState('');
   const [startTime, setStartTime] = useState(dayjs().valueOf());
   const [lastTime, setLastTime] = useState(dayjs().valueOf());
 
@@ -26,7 +26,7 @@ const Solitaire = () => {
     setSubmitValue('');
   };
 
-  const [currentSolitaireList, setCurrentSolitaireList] = useState<{ belong: string; effect: boolean; idiom: TypeIdiomItem; spend: number }[]>([]);
+  const [currentSolitaireList, setCurrentSolitaireList] = useState<TypeSolitaireItem[]>([]);
 
   const submitSolitaireAction = useCallback(
     async (params: IdiomSolitaireRobotReq, owner: keyof typeof IdiomBelong) => {
@@ -99,6 +99,28 @@ const Solitaire = () => {
     }
   };
 
+  // 有效的列表
+  const [effectSolitaireList, setEffectSolitaireList] = useState<TypeSolitaireItem[]>([]);
+  useEffect(() => {
+    setEffectSolitaireList(currentSolitaireList.filter((item) => item.effect).map((item) => item));
+  }, [currentSolitaireList]);
+
+  const [nextSolitaire, setNextSolitaire] = useState<TypeSolitaireItem>();
+  useEffect(() => {
+    if (effectSolitaireList.length === 0) return;
+    const lastSolitaire = effectSolitaireList[effectSolitaireList.length - 1];
+    setNextSolitaire({
+      belong: IdiomBelong.user,
+      idiom: genIdiomByWord(lastSolitaire.idiom.word, true),
+      effect: true,
+      spend: undefined,
+    });
+  }, [effectSolitaireList]);
+
+  useEffect(() => {
+    handleStartGame(IdiomBelong.robot);
+  }, []);
+
   return (
     <View className={styles.solitaireCon}>
       <SolitaireHeader currentSolitaireList={currentSolitaireList} />
@@ -108,29 +130,18 @@ const Solitaire = () => {
           <GameStart onGameStart={handleStartGame} />
         ) : (
           <View>
-            {currentSolitaireList.slice(-2).map((item) => (
-              <View key={item.idiom.word}>
-                <View className={styles.pinyinAvatar}>{item.idiom.pinyin.split(' ')[0]}</View>
-                <View className={styles.idiomContent}>
-                  <Text className={styles.idiomText}>{item.idiom.word}</Text>
-                  <Text className={styles.idiomPinyin}>{item.idiom.pinyin}</Text>
-                </View>
-                <View>
-                  <Text className={styles.spentTime}>{`${(item.spend / 1000 / 100).toFixed(2)}s`}</Text>
-                  <Text className={styles.spentTimeTip}>耗时</Text>
-                </View>
-              </View>
+            {effectSolitaireList.slice(-3).map((item) => (
+              <SolitaireItem key={item.idiom.word} item={item} />
             ))}
+            <SolitaireInput
+              submitValue={submitValue}
+              pinyin={nextSolitaire?.idiom.pinyin || ''}
+              onChange={handleChangeValue}
+              onSubmit={handleSubmitSolitaire}
+            />
           </View>
         )}
       </View>
-      {/* <AtSearchBar value={submitValue} maxLength={20} onClear={handleClearValue} onChange={handleChangeValue} onActionClick={handleSubmitSolitaire} />
-      <Text>游戏规则：成语的最后一个字和下一个成语的第一个字必须相同，且成语长度必须大于等于4个字</Text>
-      <View>
-        {currentSolitaireList.map((item, index) => (
-          <Text key={index}>{item.word}--</Text>
-        ))}
-      </View> */}
     </View>
   );
 };

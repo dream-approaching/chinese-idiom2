@@ -1,0 +1,67 @@
+.itemCon {
+  border-bottom: 1px solid #eee;
+  display: flex;
+  padding: 22px 0;
+  .pinyinAvatar {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      overflow: hidden;
+      font-size: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+      text-align: center;
+      white-space: pre-wrap;
+      word-break: break-all;
+      background-image: linear-gradient(45deg, #ccc, transparent);
+    }
+  }
+  .idiomContent {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    :global {
+      .at-input {
+        margin-left: 0;
+        .weui-input {
+          font-size: 32px;
+          color: #333;
+          font-weight: bold;
+          letter-spacing: 2px;
+          &::placeholder {
+            color: #999;
+            font-weight: lighter;
+          }
+        }
+      }
+    }
+  }
+  .rightContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .submitBtn {
+      font-size: 26px;
+      cursor: pointer;
+      padding: 12px;
+      color: rgb(80, 140, 224);
+    }
+    .disabled {
+      font-size: 26px;
+      cursor: not-allowed;
+      padding: 12px;
+      color: #ccc;
+    }
+  }
+}

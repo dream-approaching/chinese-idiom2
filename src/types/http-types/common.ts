@@ -24,3 +24,5 @@ export type TypeIdiomItem = {
    */
   abbreviation: string;
 };
+
+export type TypeSolitaireItem = { belong: string; effect: boolean; idiom: TypeIdiomItem; spend?: number };
