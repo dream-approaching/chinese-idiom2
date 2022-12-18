@@ -5,6 +5,7 @@ import { IdiomBelong } from '@/config/constants';
 import styles from './index.module.less';
 
 const SolitaireHeader = ({ currentSolitaireList }) => {
+  console.log('%c zjs currentSolitaireList:', 'color: #fff;background: #b457ff;', currentSolitaireList);
   const todayImage = useGetTodayImage();
 
   return (

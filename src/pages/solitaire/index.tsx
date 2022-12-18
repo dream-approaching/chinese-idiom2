@@ -13,6 +13,8 @@ import { IdiomBelong } from '@/config/constants';
 import styles from './index.module.less';
 import { SolitaireHeader, GameStart } from './components';
 
+const remainNum = 4;
+const itemHeight = 120;
 const Solitaire = () => {
   const [submitValue, setSubmitValue] = useState('');
   const [startTime, setStartTime] = useState(dayjs().valueOf());
@@ -53,14 +55,15 @@ const Solitaire = () => {
             data: { ...params },
           });
           setCurrentSolitaireList((prev) => [...prev, { belong: IdiomBelong.robot, effect: true, idiom: res.list[0], spend: dayjs().valueOf() - startTime }]);
-          console.log('%c zjs startTime:', 'color: #fff;background: #b457ff;', startTime);
-          console.log('%c zjs dayjs().valueOf() :', 'color: #fff;background: #b457ff;', dayjs().valueOf());
           setLastTime(dayjs().valueOf()); // 记录上一次的结束时间
         }
       } catch (error) {
-        const newList = currentSolitaireList.slice(0, -1);
-        setCurrentSolitaireList([...newList, { belong: IdiomBelong.user, effect: false, idiom: genIdiomByWord(submitValue), spend: lastTime - startTime }]);
+        setCurrentSolitaireList([
+          ...currentSolitaireList,
+          { belong: IdiomBelong.user, effect: false, idiom: genIdiomByWord(submitValue), spend: lastTime - startTime },
+        ]);
         setLastTime(dayjs().valueOf());
+        setSubmitValue('');
         console.error('%c IdiomApi.getList error:', 'color: #fff;background: #b457ff;', error);
       }
     },
@@ -104,6 +107,7 @@ const Solitaire = () => {
   useEffect(() => {
     setEffectSolitaireList(currentSolitaireList.filter((item) => item.effect).map((item) => item));
   }, [currentSolitaireList]);
+  console.log('%c zjs effectSolitaireList:', 'color: #fff;background: #b457ff;', effectSolitaireList);
 
   const [nextSolitaire, setNextSolitaire] = useState<TypeSolitaireItem>();
   useEffect(() => {
@@ -117,6 +121,7 @@ const Solitaire = () => {
     });
   }, [effectSolitaireList]);
 
+  // todo mock
   useEffect(() => {
     handleStartGame(IdiomBelong.robot);
   }, []);
@@ -129,8 +134,11 @@ const Solitaire = () => {
         {!isGameStart ? (
           <GameStart onGameStart={handleStartGame} />
         ) : (
-          <View>
-            {effectSolitaireList.slice(-3).map((item) => (
+          <View
+            className={styles.contentCon}
+            style={{ top: `${effectSolitaireList.length > remainNum ? -(effectSolitaireList.length - remainNum) * itemHeight : 0}px` }}
+          >
+            {effectSolitaireList.map((item) => (
               <SolitaireItem key={item.idiom.word} item={item} />
             ))}
             <SolitaireInput
