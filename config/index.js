@@ -5,9 +5,9 @@ const config = {
   date: '2022-11-19',
   designWidth: 750,
   deviceRatio: {
-    640: 2.34 / 2,
-    750: 1,
-    828: 1.81 / 2
+    640: 750 / 320,
+    750: 750 / 375,
+    828: 750 / 414
   },
   sourceRoot: 'src',
   outputRoot: 'dist',
