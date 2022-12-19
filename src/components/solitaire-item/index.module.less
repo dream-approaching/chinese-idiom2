@@ -15,7 +15,7 @@
       border-radius: 50%;
       overflow: hidden;
       font-size: 15px;
-      line-height: 6px;
+      line-height: 12px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -35,7 +35,11 @@
     .idiomText {
       font-size: 16px;
       color: #333;
-      font-weight: bold;
+      letter-spacing: 1px;
+    }
+    .idiomTextWaiting {
+      font-size: 14px;
+      color: #999;
       letter-spacing: 1px;
     }
     .idiomPinyin {
@@ -56,6 +60,18 @@
     .spentTimeTip {
       font-size: 8px;
       color: #999;
+    }
+    .spinIcon {
+      :global {
+        .at-loading {
+          width: 16px;
+          height: 16px;
+        }
+        .at-loading__ring {
+          width: 16px;
+          height: 16px;
+        }
+      }
     }
   }
 }
