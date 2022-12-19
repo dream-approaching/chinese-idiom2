@@ -18,11 +18,15 @@ export default function SolitaireInput({
   onSubmit: () => void;
 }) {
   const [disabled, setDisabled] = useState(false);
+  const [inputDisabled, setInputDisabled] = useState(false);
   const [time, setTime] = useState(0);
 
   useEffect(() => {
     if (submitValue.length === 0 || time > Max_Idiom_Time) {
       setDisabled(true);
+      if (time > Max_Idiom_Time) {
+        setInputDisabled(true);
+      }
     } else {
       setDisabled(false);
     }
@@ -44,7 +48,17 @@ export default function SolitaireInput({
         </View>
       </View>
       <View className={styles.idiomContent}>
-        <AtInput border={false} name="submitValue" maxlength={10} title="" type="text" placeholder="请在此处接龙" value={submitValue} onChange={onChange} />
+        <AtInput
+          disabled={inputDisabled}
+          border={false}
+          name="submitValue"
+          maxlength={10}
+          title=""
+          type="text"
+          placeholder="请在此处接龙"
+          value={submitValue}
+          onChange={onChange}
+        />
       </View>
       <View className={styles.rightContent} onClick={handleSubmit}>
         <Text className={`${styles.submitBtn} ${disabled ? styles.disabled : ''}`}>提交</Text>
