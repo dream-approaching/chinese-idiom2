@@ -5,6 +5,7 @@
   background-size: cover;
   color: #fff;
   display: flex;
+  position: relative;
   .leftPart {
     flex: 2;
     height: 100%;
@@ -29,12 +30,23 @@
         white-space: pre-wrap;
         word-break: break-all;
         font-weight: lighter;
+        text-align: justify;
       }
     }
     .footer {
-      font-size: 12px;
-      font-weight: lighter;
-      letter-spacing: 1px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .time {
+        font-size: 12px;
+        font-weight: lighter;
+        letter-spacing: 1px;
+      }
+      .toggleBtn {
+        font-size: 12px;
+        color: #b2dbe5;
+        letter-spacing: 1px;
+      }
     }
   }
   .rightPart {
@@ -77,7 +89,7 @@
         font-size: 12px;
         padding: 11px;
         font-weight: bold;
-        color: rgb(235, 160, 49);
+        color: #f3b458;
         letter-spacing: 1px;
       }
     }
