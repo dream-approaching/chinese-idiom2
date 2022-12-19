@@ -20,7 +20,7 @@ export default function SolitaireItem({ item }: { item?: TypeSolitaireItem }) {
       <View className={styles.rightContent}>
         {(item?.spend && (
           <>
-            <Text className={styles.spentTime}>{`${(item?.spend / 1000 / 100).toFixed(2)} s`}</Text>
+            <Text className={styles.spentTime}>{`${(item?.spend / 1000).toFixed(2)} s`}</Text>
             <Text className={styles.spentTimeTip}>{item.belong === IdiomBelong.robot ? '小灵' : '我'}</Text>
           </>
         )) || <AtActivityIndicator className={styles.spinIcon} color="#999"></AtActivityIndicator>}

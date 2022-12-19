@@ -2,6 +2,7 @@ import { View, Text } from '@tarojs/components';
 import dayjs from 'dayjs';
 import { useGetTodayImage } from '@/hooks/index';
 import { IdiomBelong } from '@/config/constants';
+import { Max_Idiom_Time } from '@/config/constants';
 import styles from './index.module.less';
 
 const SolitaireHeader = ({ currentSolitaireList }) => {
@@ -13,7 +14,7 @@ const SolitaireHeader = ({ currentSolitaireList }) => {
       <View className={styles.leftPart}>
         <View className={styles.titleCon}>
           <Text className={styles.title}>成语接龙</Text>
-          <Text className={styles.rule}>游戏规则: 成语的最后一个字和下一个成语的第一个字必须相同，且成语长度必须大于等于4个字</Text>
+          <Text className={styles.rule}>游戏规则: 成语的最后一个字和下一个成语的第一个字必须相同，且成语长度必须大于等于4个字。最长等待时间99秒</Text>
         </View>
         <Text className={styles.footer}>{dayjs().format('MMMM D, YYYY')}</Text>
       </View>

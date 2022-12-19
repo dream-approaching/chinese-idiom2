@@ -6,7 +6,7 @@ const GameStart = ({ onGameStart }) => {
   return (
     <View className={styles.gameStartCon}>
       <Text className={styles.gameStartTip}>你好，我是机器人小灵。欢迎来到成语接龙，点击下方按钮选择谁先开始</Text>
-      <View className={styles.gameStartCon}>
+      <View className={styles.gameStartBtnCon}>
         <View className={styles.gameStartBtn} onClick={() => onGameStart(IdiomBelong.user)}>
           我先
         </View>

@@ -45,6 +45,13 @@
             font-weight: lighter;
           }
         }
+        .at-input__children {
+          color: #999;
+          font-size: 12px;
+          &::after {
+            display: none;
+          }
+        }
       }
     }
   }
@@ -55,15 +62,17 @@
     justify-content: center;
     align-items: center;
     .submitBtn {
-      font-size: 13px;
+      font-size: 14px;
       cursor: pointer;
-      padding: 12px;
+      color: rgb(80, 140, 224);
+      margin-bottom: -4px;
+    }
+    .submitTime {
+      font-size: 10px;
       color: rgb(80, 140, 224);
     }
     .disabled {
-      font-size: 13px;
       cursor: not-allowed;
-      padding: 6px;
       color: #ccc;
     }
   }
