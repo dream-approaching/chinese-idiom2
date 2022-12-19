@@ -129,9 +129,18 @@ const Solitaire = () => {
     // handleStartGame(IdiomBelong.robot);
   }, []);
 
+  // 重新开始 重置
+  const handleResetAll = () => {
+    setIsGameStart(false);
+    setCurrentSolitaireList([]);
+    setEffectSolitaireList([]);
+    setSubmitValue('');
+    setNextSolitaire(undefined);
+  };
+
   return (
     <View className={styles.solitaireCon}>
-      <SolitaireHeader currentSolitaireList={currentSolitaireList} />
+      <SolitaireHeader currentSolitaireList={currentSolitaireList} showRight={isGameStart} onRestart={handleResetAll} />
 
       <View className={styles.gameContent}>
         {!isGameStart ? (
