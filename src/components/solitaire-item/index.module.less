@@ -1,113 +1,115 @@
-.itemCon {
-  border-bottom: 1px solid #eee;
-  display: flex;
-  padding: 10px 0;
-  height: 60px;
-  overflow: hidden;
-  .pinyinAvatar {
-    flex: 1;
+.itemContainer {
+  .itemCon {
+    border-bottom: 1px solid #eee;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      overflow: hidden;
-      font-size: 15px;
-      line-height: 12px;
+    padding: 10px 0;
+    height: 60px;
+    overflow: hidden;
+    .pinyinAvatar {
+      flex: 1;
       display: flex;
       justify-content: center;
       align-items: center;
-      color: #fff;
-      text-align: center;
-      white-space: pre-wrap;
-      word-break: break-all;
-      background-image: linear-gradient(45deg, #ccc, transparent);
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        overflow: hidden;
+        font-size: 15px;
+        line-height: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        text-align: center;
+        white-space: pre-wrap;
+        word-break: break-all;
+        background-image: linear-gradient(45deg, #ccc, transparent);
+      }
     }
-  }
-  .idiomContent {
-    flex: 3;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    .idiomText {
-      font-size: 16px;
-      color: #333;
-      letter-spacing: 1px;
+    .idiomContent {
+      flex: 3;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      .idiomText {
+        font-size: 16px;
+        color: #333;
+        letter-spacing: 1px;
+      }
+      .unEffect {
+        color: #999;
+      }
+      .idiomTextWaiting {
+        font-size: 14px;
+        color: #999;
+        letter-spacing: 1px;
+      }
+      .idiomPinyin {
+        font-size: 11px;
+        color: #999;
+      }
     }
-    .unEffect {
-      color: #999;
-    }
-    .idiomTextWaiting {
-      font-size: 14px;
-      color: #999;
-      letter-spacing: 1px;
-    }
-    .idiomPinyin {
-      font-size: 11px;
-      color: #999;
-    }
-  }
-  .rightContent {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    .spentTime {
-      font-size: 11px;
-      color: #999;
-    }
-    .spentTimeTip {
-      font-size: 8px;
-    }
-    .spinIcon {
-      :global {
-        .at-loading {
-          width: 16px;
-          height: 16px;
-        }
-        .at-loading__ring {
-          width: 16px;
-          height: 16px;
+    .rightContent {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .spentTime {
+        font-size: 11px;
+        color: #999;
+      }
+      .spentTimeTip {
+        font-size: 8px;
+      }
+      .spinIcon {
+        :global {
+          .at-loading {
+            width: 16px;
+            height: 16px;
+          }
+          .at-loading__ring {
+            width: 16px;
+            height: 16px;
+          }
         }
       }
     }
   }
-}
-.small {
-  border-bottom: none;
-  padding: 6px 0;
-  height: 60px;
-  margin: 0 4px;
-  .pinyinAvatar {
-    .avatar {
-      width: 34px;
-      height: 34px;
-      font-size: 12px;
-      line-height: 10px;
+  .small {
+    border-bottom: none;
+    padding: 6px 0;
+    height: 60px;
+    margin: 0 4px;
+    .pinyinAvatar {
+      .avatar {
+        width: 34px;
+        height: 34px;
+        font-size: 12px;
+        line-height: 10px;
+      }
     }
-  }
-  .idiomContent {
-    .idiomText {
-      font-size: 14px;
-      line-height: 16px;
+    .idiomContent {
+      .idiomText {
+        font-size: 14px;
+        line-height: 16px;
+      }
+      .idiomTextWaiting {
+        font-size: 12px;
+      }
+      .idiomPinyin {
+        font-size: 10px;
+      }
     }
-    .idiomTextWaiting {
-      font-size: 12px;
-    }
-    .idiomPinyin {
-      font-size: 10px;
-    }
-  }
-  .rightContent {
-    .spentTime {
-      font-size: 10px;
-    }
-    .spentTimeTip {
-      font-size: 8px;
+    .rightContent {
+      .spentTime {
+        font-size: 10px;
+      }
+      .spentTimeTip {
+        font-size: 8px;
+      }
     }
   }
 }

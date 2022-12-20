@@ -1,6 +1,6 @@
 import { View, Text } from '@tarojs/components';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AtActivityIndicator, AtDrawer } from 'taro-ui';
 import { useGetTodayImage } from '@/hooks/index';
 import { IdiomBelong, Max_Idiom_Time } from '@/config/constants';
@@ -14,14 +14,21 @@ const SolitaireHeader = ({ currentSolitaireList, showRight, onRestart }) => {
   const [showDraw, setShowDraw] = useState(false);
   const [showList, setShowList] = useState<TypeSolitaireItem[]>([]);
   const handleShowDrawer = (type: string) => {
-    setShowDraw(true);
     if (type === 'all') {
       setShowList(currentSolitaireList);
+      if (currentSolitaireList.length) {
+        setShowDraw(true);
+      }
     }
     if (type === 'mine') {
-      setShowList(currentSolitaireList.filter((item) => item.belong === IdiomBelong.user));
+      const list = currentSolitaireList.filter((item) => item.belong === IdiomBelong.user);
+      setShowList(list);
+      if (list.length) {
+        setShowDraw(true);
+      }
     }
   };
+
   const handleHideDrawer = () => {
     setShowDraw(false);
   };
