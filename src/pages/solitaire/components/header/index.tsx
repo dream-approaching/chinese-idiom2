@@ -71,7 +71,7 @@ const SolitaireHeader = ({ currentSolitaireList, showRight, onRestart }) => {
           </View>
         )}
       </View>
-      <AtDrawer show={showDraw} mask onClose={handleHideDrawer} right width="66vw" className={styles.drawContent}>
+      <AtDrawer show={showDraw} mask onClose={handleHideDrawer} right width="70vw" className={styles.drawContent}>
         {showList.map((item) => (
           <SolitaireItem key={item.idiom.word} item={item} size="small" />
         ))}

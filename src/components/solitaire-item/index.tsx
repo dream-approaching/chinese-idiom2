@@ -1,11 +1,31 @@
 import { View, Text } from '@tarojs/components';
-import type { TypeSolitaireItem } from '@/types/http-types/common';
+import { useState, useEffect, memo } from 'react';
+import type { TypeSolitaireItem, TypeIdiomItem } from '@/types/http-types/common';
 import { IdiomBelong, ColorTheme } from '@/config/constants';
-import { AtActivityIndicator } from 'taro-ui';
+import { IdiomItem } from '@/components';
+import { AtActivityIndicator, AtModal, AtModalContent } from 'taro-ui';
 import styles from './index.module.less';
 
-export default function SolitaireItem({ item, size }: { item?: TypeSolitaireItem; size?: string }) {
+function SolitaireItem({ item, size }: { item?: TypeSolitaireItem; size?: string }) {
   const avatarBg = item?.effect ? (item?.belong === IdiomBelong.robot ? ColorTheme.robot : ColorTheme.user) : 'transparent';
+
+  const [modalShow, setModalShow] = useState(false);
+
+  const handleShowModal = () => {
+    if (!item?.idiom.word || !item?.effect) return;
+    setModalShow(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalShow(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      setModalShow(false);
+    };
+  }, []);
+
   return (
     <View className={styles.itemContainer}>
       <View className={`${styles.itemCon} ${size ? styles[size] : ''}`} key={item?.idiom.word}>
@@ -16,7 +36,7 @@ export default function SolitaireItem({ item, size }: { item?: TypeSolitaireItem
         </View>
         <View className={styles.idiomContent}>
           {(item?.idiom.word && (
-            <Text className={`${styles.idiomText} ${item.effect ? '' : styles.unEffect}`}>
+            <Text onClick={handleShowModal} className={`${styles.idiomText} ${item.effect ? '' : styles.unEffect}`}>
               {item.idiom.word}
               {!item.effect && '(无效)'}
             </Text>
@@ -34,6 +54,14 @@ export default function SolitaireItem({ item, size }: { item?: TypeSolitaireItem
           )) || <AtActivityIndicator className={styles.spinIcon} color="#999"></AtActivityIndicator>}
         </View>
       </View>
+      {item?.idiom && (
+        <AtModal isOpened={modalShow} className={styles.modalContain} onClose={handleCloseModal}>
+          <AtModalContent>
+            <IdiomItem item={item?.idiom as TypeIdiomItem} allowToggle={false} />
+          </AtModalContent>
+        </AtModal>
+      )}
     </View>
   );
 }
+export default memo(SolitaireItem);

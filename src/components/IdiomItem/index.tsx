@@ -4,7 +4,7 @@ import { generalColorByStr } from '@/utils/index';
 import type { IdiomListGetRes } from '@/types/http-types/idiom-list';
 import styles from './index.module.less';
 
-export default function IdiomItem({ item }: { item: IdiomListGetRes['data']['list'][0] }) {
+export default function IdiomItem({ item, allowToggle = true }: { item: IdiomListGetRes['data']['list'][0]; allowToggle?: boolean }) {
   const [open, setOpen] = useState(true);
 
   const contentArr = [
@@ -15,6 +15,7 @@ export default function IdiomItem({ item }: { item: IdiomListGetRes['data']['lis
   ];
 
   const handleToggleStatus = () => {
+    if (!allowToggle) return;
     setOpen(!open);
   };
 
@@ -26,7 +27,7 @@ export default function IdiomItem({ item }: { item: IdiomListGetRes['data']['lis
       <div className={styles.rightCon}>
         <div className={styles.titleCon}>
           <span className={styles.titleText}>{item.word}</span>
-          <img className={`${styles.icon} ${open ? styles.openIcon : ''}`} src={ArrowIcon} />
+          {allowToggle && <img className={`${styles.icon} ${open ? styles.openIcon : ''}`} src={ArrowIcon} />}
         </div>
         <div className={`${styles.contentCon} ${open ? styles.showAll : ''}`}>
           {contentArr.map((contentItem, index) => {
