@@ -1,21 +1,20 @@
-import { Component } from "react";
-import Taro from "@tarojs/taro";
-import { View, Text, Input } from "@tarojs/components";
-import pinyin from "pinyin";
-import { AllIdiomList } from "../../config/idiom";
+import { Component } from 'react';
+import Taro from '@tarojs/taro';
+import { View, Text, Input } from '@tarojs/components';
+import pinyin from 'pinyin';
 
-import "./index.less";
+import './index.less';
 
 const Home = () => {
   const handleToDictionary = () => {
     Taro.navigateTo({
-      url: "pages/dictionary/index",
+      url: 'pages/dictionary/index',
     });
   };
 
   const handleToSolitaire = () => {
     Taro.navigateTo({
-      url: "pages/solitaire/index",
+      url: 'pages/solitaire/index',
     });
   };
 

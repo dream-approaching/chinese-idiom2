@@ -16,7 +16,7 @@ const DEFAULT_FILTER = [
   { name: '首音节匹配', value: FilterMap.firstPinyin },
 ];
 const Dictionary = () => {
-  const [searchValue, setSearchValue] = useState('窜');
+  const [searchValue, setSearchValue] = useState('');
   const [debouncedValue] = useDebounce<string>(searchValue, 500);
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
