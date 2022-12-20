@@ -2,7 +2,7 @@ import { View, Text } from '@tarojs/components';
 import { generalColorByStr } from '@/utils/index';
 import { AtInput } from 'taro-ui';
 import { useState, useEffect } from 'react';
-import { Max_Idiom_Time } from '@/config/constants';
+import { Max_Idiom_Time, Show_Skip_Time } from '@/config/constants';
 import { useInterval } from '@/hooks/index';
 import styles from './index.module.less';
 
@@ -12,16 +12,16 @@ export default function SolitaireInput({
   onChange,
   onSubmit,
   handleRestart,
-  allowSkipTime,
-  handleSkip,
+  onSkip,
+  allowSkipTimes,
 }: {
   pinyin: string;
   submitValue: string;
-  allowSkipTime: number;
+  allowSkipTimes: number;
   onChange: (value: string) => void;
   onSubmit: () => void;
   handleRestart: () => void;
-  handleSkip: () => void;
+  onSkip: () => void;
 }) {
   const [disabled, setDisabled] = useState(false);
   const [inputDisabled, setInputDisabled] = useState(false);
@@ -45,6 +45,12 @@ export default function SolitaireInput({
       return;
     }
     onSubmit();
+  };
+
+  const handleSkip = () => {
+    if (!allowSkipTimes) return;
+    setWaitTime(0); // 重置等待时间
+    onSkip();
   };
   return (
     <View className={styles.inputContainer}>
@@ -73,9 +79,9 @@ export default function SolitaireInput({
         </View>
       </View>
       <View className={styles.inputFooter}>
-        {waitTime > Max_Idiom_Time / 10 && waitTime < Max_Idiom_Time && (
-          <Text className={styles.jumpBtn} onClick={handleSkip}>
-            答不上来 点击跳过 (剩余 {allowSkipTime} 次)
+        {waitTime > Show_Skip_Time && waitTime < Max_Idiom_Time && (
+          <Text className={`${styles.jumpBtn} ${!allowSkipTimes ? styles.jumpDisabled : ''}`} onClick={handleSkip}>
+            答不上来 点击跳过 (剩余 {allowSkipTimes} 次)
           </Text>
         )}
         {waitTime >= Max_Idiom_Time && (

@@ -8,7 +8,7 @@ import { getPinYinByWord, genIdiomByWord } from '@/utils/index';
 import type { IdiomSolitaireRobotReq, IdiomSolitaireRobotRes } from '@/types/http-types/idiom-solitaire-robot';
 import type { TypeSolitaireItem, TypeIdiomItem } from '@/types/http-types/common';
 import { SolitaireItem, SolitaireInput } from '@/components';
-import { IdiomBelong } from '@/config/constants';
+import { IdiomBelong, Allow_Skip_times } from '@/config/constants';
 import styles from './index.module.less';
 import { SolitaireHeader, GameStart } from './components';
 
@@ -17,7 +17,6 @@ const itemHeight = 3; // 3rem
 const Solitaire = () => {
   const [submitValue, setSubmitValue] = useState('');
   const [lastTime, setLastTime] = useState(dayjs().valueOf());
-  const [allowSkipTime, setAllowSkipTime] = useState(3);
 
   const handleChangeValue = (value: string) => {
     setSubmitValue(value.trim().slice(0, 20));
@@ -130,7 +129,10 @@ const Solitaire = () => {
   }, []);
 
   // 用户跳过 机器人帮助答题
-  const handleSkip = () => {
+  const [allowSkipTimes, setAllowSkipTimes] = useState(Allow_Skip_times);
+  const onSkip = () => {
+    setAllowSkipTimes((prev) => prev - 1); // 跳过次数减一
+    setSubmitValue('');
     if (effectSolitaireList.length === 0) {
       submitSolitaireAction({ currentListLength: 0 }, IdiomBelong.robot);
       return;
@@ -145,6 +147,7 @@ const Solitaire = () => {
     setEffectSolitaireList([]);
     setSubmitValue('');
     setNextSolitaire(undefined);
+    setAllowSkipTimes(Allow_Skip_times);
   };
 
   return (
@@ -171,8 +174,8 @@ const Solitaire = () => {
                   onChange={handleChangeValue}
                   onSubmit={handleSubmitSolitaire}
                   handleRestart={handleResetAll}
-                  handleSkip={handleSkip}
-                  allowSkipTime={allowSkipTime}
+                  onSkip={onSkip}
+                  allowSkipTimes={allowSkipTimes}
                 />
               ) : (
                 <SolitaireItem item={nextSolitaire} />
