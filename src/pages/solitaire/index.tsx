@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { View } from '@tarojs/components';
 import HttpRequest from '@/config/request';
 import dayjs from 'dayjs';
@@ -16,7 +16,8 @@ const remainNum = 4;
 const itemHeight = 3; // 3rem
 const Solitaire = () => {
   const [submitValue, setSubmitValue] = useState('');
-  const [lastTime, setLastTime] = useState(dayjs().valueOf());
+  const [lastTime, setLastTime] = useState(0);
+  const lastTimeRef = useRef(lastTime);
 
   const handleChangeValue = (value: string) => {
     setSubmitValue(value.trim().slice(0, 20));
@@ -32,7 +33,7 @@ const Solitaire = () => {
         if (isByUser) {
           setCurrentSolitaireList((prev) => [
             ...prev,
-            { belong: IdiomBelong.user, effect: true, idiom: genIdiomByWord(submitValue), spend: dayjs().valueOf() - lastTime },
+            { belong: IdiomBelong.user, effect: true, idiom: genIdiomByWord(submitValue), spend: dayjs().valueOf() - lastTimeRef.current },
           ]);
           const res = await HttpRequest<IdiomSolitaireRobotReq, IdiomSolitaireRobotRes['data']>({
             url: IdiomApi.solitaireWithRobot,
@@ -44,19 +45,22 @@ const Solitaire = () => {
             url: IdiomApi.solitaireWithRobot,
             data: { ...params },
           });
-          setCurrentSolitaireList((prev) => [...prev, { belong: IdiomBelong.robot, effect: true, idiom: res.list[0], spend: dayjs().valueOf() - lastTime }]);
+          setCurrentSolitaireList((prev) => [
+            ...prev,
+            { belong: IdiomBelong.robot, effect: true, idiom: res.list[0], spend: dayjs().valueOf() - lastTimeRef.current },
+          ]);
         }
       } catch (error) {
         setCurrentSolitaireList([
           ...currentSolitaireList,
-          { belong: IdiomBelong.user, effect: false, idiom: genIdiomByWord(submitValue), spend: dayjs().valueOf() - lastTime },
+          { belong: IdiomBelong.user, effect: false, idiom: genIdiomByWord(submitValue), spend: dayjs().valueOf() - lastTimeRef.current },
         ]);
         setSubmitValue('');
         setNextSolitaire(undefined);
         console.error('%c IdiomApi.getList error:', 'color: #fff;background: #b457ff;', error);
       }
     },
-    [submitValue, currentSolitaireList, lastTime]
+    [submitValue, currentSolitaireList]
   );
 
   // 模拟机器人 0-3s 之间随机回复
@@ -104,11 +108,17 @@ const Solitaire = () => {
     }
   };
 
+  useEffect(() => {
+    lastTimeRef.current = lastTime;
+  }, [lastTime]);
+
   // 有效的列表
   const [effectSolitaireList, setEffectSolitaireList] = useState<TypeSolitaireItem[]>([]);
   useEffect(() => {
-    setEffectSolitaireList(currentSolitaireList.filter((item) => item.effect).map((item) => item));
+    if (currentSolitaireList.length === 0) return;
     setLastTime(dayjs().valueOf()); // 记录上一次的结束时间
+    setEffectSolitaireList(currentSolitaireList.filter((item) => item.effect).map((item) => item));
+    console.log('%c zjs currentSolitaireList:', 'color: #fff;background: #b457ff;', currentSolitaireList);
   }, [currentSolitaireList]);
 
   const [nextSolitaire, setNextSolitaire] = useState<TypeSolitaireItem>();
