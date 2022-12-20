@@ -16,8 +16,8 @@ const remainNum = 4;
 const itemHeight = 3; // 3rem
 const Solitaire = () => {
   const [submitValue, setSubmitValue] = useState('');
-  const [startTime, setStartTime] = useState(dayjs().valueOf());
   const [lastTime, setLastTime] = useState(dayjs().valueOf());
+  const [allowSkipTime, setAllowSkipTime] = useState(3);
 
   const handleChangeValue = (value: string) => {
     setSubmitValue(value.trim().slice(0, 20));
@@ -45,7 +45,7 @@ const Solitaire = () => {
             url: IdiomApi.solitaireWithRobot,
             data: { ...params },
           });
-          setCurrentSolitaireList((prev) => [...prev, { belong: IdiomBelong.robot, effect: true, idiom: res.list[0], spend: dayjs().valueOf() - startTime }]);
+          setCurrentSolitaireList((prev) => [...prev, { belong: IdiomBelong.robot, effect: true, idiom: res.list[0], spend: dayjs().valueOf() - lastTime }]);
         }
       } catch (error) {
         setCurrentSolitaireList([
@@ -57,7 +57,7 @@ const Solitaire = () => {
         console.error('%c IdiomApi.getList error:', 'color: #fff;background: #b457ff;', error);
       }
     },
-    [submitValue, currentSolitaireList, lastTime, startTime]
+    [submitValue, currentSolitaireList, lastTime]
   );
 
   // 模拟机器人 0-3s 之间随机回复
@@ -98,10 +98,10 @@ const Solitaire = () => {
   const handleStartGame = (belong: string) => {
     setIsGameStart(true);
     if (belong === IdiomBelong.robot) {
-      setStartTime(dayjs().valueOf());
+      setLastTime(dayjs().valueOf());
       submitSolitaireAction({ currentListLength: 0 }, IdiomBelong.robot);
     } else {
-      setStartTime(dayjs().valueOf());
+      setLastTime(dayjs().valueOf());
     }
   };
 
@@ -128,6 +128,15 @@ const Solitaire = () => {
   useEffect(() => {
     // handleStartGame(IdiomBelong.robot);
   }, []);
+
+  // 用户跳过 机器人帮助答题
+  const handleSkip = () => {
+    if (effectSolitaireList.length === 0) {
+      submitSolitaireAction({ currentListLength: 0 }, IdiomBelong.robot);
+      return;
+    }
+    submitSolitaireAction({ pinyin: getPinYinByWord(effectSolitaireList[effectSolitaireList.length - 1].idiom.word, { isLast: true }) }, IdiomBelong.robot);
+  };
 
   // 重新开始 重置
   const handleResetAll = () => {
@@ -161,6 +170,9 @@ const Solitaire = () => {
                   pinyin={nextSolitaire?.idiom.pinyin || ''}
                   onChange={handleChangeValue}
                   onSubmit={handleSubmitSolitaire}
+                  handleRestart={handleResetAll}
+                  handleSkip={handleSkip}
+                  allowSkipTime={allowSkipTime}
                 />
               ) : (
                 <SolitaireItem item={nextSolitaire} />

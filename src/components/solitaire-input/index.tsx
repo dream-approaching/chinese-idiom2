@@ -11,28 +11,34 @@ export default function SolitaireInput({
   submitValue,
   onChange,
   onSubmit,
+  handleRestart,
+  allowSkipTime,
+  handleSkip,
 }: {
   pinyin: string;
   submitValue: string;
+  allowSkipTime: number;
   onChange: (value: string) => void;
   onSubmit: () => void;
+  handleRestart: () => void;
+  handleSkip: () => void;
 }) {
   const [disabled, setDisabled] = useState(false);
   const [inputDisabled, setInputDisabled] = useState(false);
-  const [time, setTime] = useState(0);
+  const [waitTime, setWaitTime] = useState(0);
 
   useEffect(() => {
-    if (submitValue.length === 0 || time > Max_Idiom_Time) {
+    if (submitValue.length === 0 || waitTime > Max_Idiom_Time) {
       setDisabled(true);
-      if (time > Max_Idiom_Time) {
+      if (waitTime > Max_Idiom_Time) {
         setInputDisabled(true);
       }
     } else {
       setDisabled(false);
     }
-  }, [submitValue, time]);
+  }, [submitValue, waitTime]);
 
-  useInterval(() => setTime(time + 1), time > Max_Idiom_Time ? null : 1000);
+  useInterval(() => setWaitTime(waitTime + 1), waitTime >= Max_Idiom_Time ? null : 1000);
 
   const handleSubmit = () => {
     if (disabled) {
@@ -41,28 +47,45 @@ export default function SolitaireInput({
     onSubmit();
   };
   return (
-    <View className={styles.itemCon}>
-      <View className={styles.pinyinAvatar}>
-        <View className={styles.avatar} style={{ backgroundColor: generalColorByStr(pinyin) }}>
-          {pinyin}
+    <View className={styles.inputContainer}>
+      <View className={styles.itemCon}>
+        <View className={styles.pinyinAvatar}>
+          <View className={styles.avatar} style={{ backgroundColor: generalColorByStr(pinyin) }}>
+            {pinyin}
+          </View>
+        </View>
+        <View className={styles.idiomContent}>
+          <AtInput
+            disabled={inputDisabled}
+            border={false}
+            name="submitValue"
+            maxlength={10}
+            title=""
+            type="text"
+            placeholder="请在此处接龙"
+            value={submitValue}
+            onChange={onChange}
+          />
+        </View>
+        <View className={styles.rightContent} onClick={handleSubmit}>
+          <Text className={`${styles.submitBtn} ${disabled ? styles.disabled : ''}`}>提交</Text>
+          <Text className={`${styles.submitTime} ${disabled ? styles.disabled : ''}`}>{waitTime} s</Text>
         </View>
       </View>
-      <View className={styles.idiomContent}>
-        <AtInput
-          disabled={inputDisabled}
-          border={false}
-          name="submitValue"
-          maxlength={10}
-          title=""
-          type="text"
-          placeholder="请在此处接龙"
-          value={submitValue}
-          onChange={onChange}
-        />
-      </View>
-      <View className={styles.rightContent} onClick={handleSubmit}>
-        <Text className={`${styles.submitBtn} ${disabled ? styles.disabled : ''}`}>提交</Text>
-        <Text className={`${styles.submitTime} ${disabled ? styles.disabled : ''}`}>{time} s</Text>
+      <View className={styles.inputFooter}>
+        {waitTime > Max_Idiom_Time / 10 && waitTime < Max_Idiom_Time && (
+          <Text className={styles.jumpBtn} onClick={handleSkip}>
+            答不上来 点击跳过 (剩余 {allowSkipTime} 次)
+          </Text>
+        )}
+        {waitTime >= Max_Idiom_Time && (
+          <>
+            <Text className={styles.gameOverTip}>超出等待时间，此局已结束</Text>
+            <Text className={styles.gameOverBtn} onClick={handleRestart}>
+              点击重新开始
+            </Text>
+          </>
+        )}
       </View>
     </View>
   );

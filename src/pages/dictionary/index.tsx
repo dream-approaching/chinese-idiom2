@@ -103,7 +103,6 @@ const Dictionary = () => {
   };
 
   const isSearching = !!debouncedValue;
-  console.log('%c zjs showArr:', 'color: #fff;background: #b457ff;', showArr);
   return (
     <View className={styles.dictionaryCon}>
       <AtSearchBar value={searchValue} fixed maxLength={10} onClear={handleClearValue} onChange={handleChangeValue} />
