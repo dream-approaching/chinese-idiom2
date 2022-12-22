@@ -1,0 +1,40 @@
+.homeCon {
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #fcfcfc;
+  .cardItem {
+    width: 80vw;
+    overflow: hidden;
+    border-radius: 60px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 14px;
+    color: #fff;
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-shadow: -2px 2px 5px #ffffff;
+    &:first-child {
+      margin-top: 19px;
+      color: #4a6a76;
+      background: #1e8e7d; /* fallback color if gradients are not supported*/
+      background: -webkit-linear-gradient(-23deg, rgba(30, 142, 125, 0.7), rgba(120, 192, 255, 0.6), rgba(231, 144, 255, 0.6));
+      background: -moz-linear-gradient(-23deg, rgba(30, 142, 125, 0.7), rgba(120, 192, 255, 0.6), rgba(231, 144, 255, 0.6));
+      background: -o-linear-gradient(-23deg, rgba(30, 142, 125, 0.7), rgba(120, 192, 255, 0.6), rgba(231, 144, 255, 0.6));
+      background: linear-gradient(-23deg, rgba(30, 142, 125, 0.7), rgba(120, 192, 255, 0.6), rgba(231, 144, 255, 0.6));
+    }
+    &:last-child {
+      color: #548137;
+      background: #62b912; /* fallback color if gradients are not supported*/
+      background: -webkit-linear-gradient(-23deg, rgba(98, 185, 18, 0.5), rgba(134, 255, 192, 0.8), rgba(177, 210, 255, 0.5));
+      background: -moz-linear-gradient(-23deg, rgba(98, 185, 18, 0.5), rgba(134, 255, 192, 0.8), rgba(177, 210, 255, 0.5));
+      background: -o-linear-gradient(-23deg, rgba(98, 185, 18, 0.5), rgba(134, 255, 192, 0.8), rgba(177, 210, 255, 0.5));
+      background: linear-gradient(-23deg, rgba(98, 185, 18, 0.5), rgba(134, 255, 192, 0.8), rgba(177, 210, 255, 0.5));
+    }
+  }
+}

@@ -1,9 +1,7 @@
-import { Component } from 'react';
 import Taro from '@tarojs/taro';
-import { View, Text, Input } from '@tarojs/components';
-import pinyin from 'pinyin';
-
-import './index.less';
+import { View, Text } from '@tarojs/components';
+import { HomeHeader } from './components';
+import styles from './index.module.less';
 
 const Home = () => {
   const handleToDictionary = () => {
@@ -19,12 +17,15 @@ const Home = () => {
   };
 
   return (
-    <View className="index">
-      <View onClick={handleToDictionary}>
-        <Text>查成语</Text>
-      </View>
-      <View onClick={handleToSolitaire}>
-        <Text>玩接龙</Text>
+    <View className={styles.homeCon}>
+      <HomeHeader />
+      <View>
+        <View onClick={handleToDictionary} className={styles.cardItem}>
+          <Text>成语查找</Text>
+        </View>
+        <View onClick={handleToSolitaire} className={styles.cardItem}>
+          <Text>成语接龙</Text>
+        </View>
       </View>
     </View>
   );

@@ -1,0 +1,109 @@
+.headerCardCon {
+  width: 100%;
+  height: 200px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: #fff;
+  display: flex;
+  position: relative;
+  .leftPart {
+    flex: 2;
+    height: 100%;
+    padding: 11px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .titleCon {
+      .title {
+        font-size: 20px;
+        font-weight: 600;
+        display: block;
+        letter-spacing: 2px;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      }
+      .rule {
+        font-size: 12px;
+        line-height: 15px;
+        display: block;
+        margin-top: 8px;
+        color: #fff;
+        white-space: pre-wrap;
+        word-break: break-all;
+        font-weight: lighter;
+        text-align: justify;
+      }
+    }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      .time {
+        font-size: 12px;
+        font-weight: lighter;
+        letter-spacing: 1px;
+      }
+      .toggleBtn {
+        font-size: 12px;
+        color: #b2dbe5;
+        letter-spacing: 1px;
+      }
+    }
+  }
+  .rightPart {
+    flex: 1;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    background-image: linear-gradient(316deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    .rightTop {
+      flex: 4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      .lenCon {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        .length {
+          font-size: 22px;
+          font-weight: 600;
+          color: #b2dbe5;
+          text-shadow: 1px -1px 0px #fff;
+        }
+        .lengthTip {
+          font-size: 12px;
+          font-weight: lighter;
+        }
+      }
+    }
+    .rightBottom {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      .restartText {
+        font-size: 12px;
+        padding: 11px;
+        font-weight: bold;
+        color: #f3b458;
+        letter-spacing: 1px;
+      }
+    }
+  }
+}
+
+.headContainer {
+  :global {
+    .at-drawer__content {
+      padding-bottom: 30px;
+      background-color: rgba(255, 255, 255, 0.95);
+    }
+  }
+}
