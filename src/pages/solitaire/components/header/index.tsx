@@ -1,6 +1,6 @@
 import { View, Text } from '@tarojs/components';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { AtActivityIndicator, AtDrawer } from 'taro-ui';
 import { useGetTodayImage } from '@/hooks/index';
 import { IdiomBelong, Max_Idiom_Time } from '@/config/constants';
