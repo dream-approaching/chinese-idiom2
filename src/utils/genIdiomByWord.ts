@@ -1,11 +1,11 @@
-import pinyin from 'pinyin';
+import { pinyin } from 'pinyin-pro';
 import type { TypeIdiomItem } from '@/types/http-types/common';
 
 export const genIdiomByWord = (word: string, onlyPinyin?: boolean): TypeIdiomItem => {
   if (onlyPinyin) {
     return {
       word: '',
-      pinyin: pinyin(word.slice(-1)).flat().join(' '),
+      pinyin: pinyin(word.slice(-1)),
       derivation: '',
       example: '',
       explanation: '',
@@ -14,7 +14,7 @@ export const genIdiomByWord = (word: string, onlyPinyin?: boolean): TypeIdiomIte
   }
   return {
     word: word,
-    pinyin: pinyin(word).flat().join(' '),
+    pinyin: pinyin(word),
     derivation: '',
     example: '',
     explanation: '',

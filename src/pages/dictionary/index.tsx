@@ -1,8 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useShareAppMessage, useShareTimeline } from '@tarojs/taro';
 import { View, ScrollView } from '@tarojs/components';
 import { IdiomItem, Empty } from '@/components/index';
 import HttpRequest from '@/config/request';
-import pinyin from 'pinyin';
+import { pinyin } from 'pinyin-pro';
 import { AtSearchBar, AtTag } from 'taro-ui';
 import { IdiomApi } from '@/api/index';
 import { useDebounce } from 'use-debounce';
@@ -29,6 +30,24 @@ const Dictionary = () => {
   const handleClearValue = () => {
     setSearchValue('');
   };
+
+  useShareAppMessage((res) => {
+    if (res.from === 'button') {
+      // 来自页面内转发按钮
+      console.log(res.target);
+    }
+    return {
+      title: '成语接龙，试试你可以接几个',
+      path: '/pages/index/index',
+    };
+  });
+
+  useShareTimeline(() => {
+    return {
+      title: '成语接龙，随便接一个',
+      path: '/pages/index/index',
+    };
+  });
 
   const [activeFilter, setActiveFilter] = useState(FilterMap.blur);
 
@@ -59,7 +78,7 @@ const Dictionary = () => {
     const params: IdiomListGetReq = { page: currentPage };
     if (activeFilter === FilterMap.firstPinyin) {
       // 首音节匹配
-      const searchValueFirstPinyin = pinyin(debouncedValue, { style: pinyin.STYLE_NORMAL })[0][0];
+      const searchValueFirstPinyin = pinyin(debouncedValue, { toneType: 'none', type: 'array' })[0];
 
       params.pinyin = searchValueFirstPinyin;
       params.isFirst = '1';
@@ -117,7 +136,6 @@ const Dictionary = () => {
       </View>
       {isSearching && (
         <ScrollView
-          enhanced
           pagingEnabled
           scrollY
           scrollWithAnimation

@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { View } from '@tarojs/components';
 import HttpRequest from '@/config/request';
 import dayjs from 'dayjs';
-import Taro from '@tarojs/taro';
+import Taro, { useShareAppMessage, useShareTimeline } from '@tarojs/taro';
 import { IdiomApi } from '@/api/index';
 import { getPinYinByWord, genIdiomByWord } from '@/utils/index';
 import type { IdiomSolitaireRobotReq, IdiomSolitaireRobotRes } from '@/types/http-types/idiom-solitaire-robot';
@@ -19,10 +19,27 @@ const Solitaire = () => {
   const [lastTime, setLastTime] = useState(0);
   const lastTimeRef = useRef(lastTime);
 
-  const handleChangeValue = (value: string) => {
-    setSubmitValue(value.trim().slice(0, 20));
+  const handleChangeValue = (event) => {
+    setSubmitValue(event.detail.value.trim().slice(0, 20));
   };
 
+  useShareAppMessage((res) => {
+    if (res.from === 'button') {
+      // 来自页面内转发按钮
+      console.log(res.target);
+    }
+    return {
+      title: '成语接龙，试试你可以接几个',
+      path: '/pages/index/index',
+    };
+  });
+
+  useShareTimeline(() => {
+    return {
+      title: '成语接龙，随便接一个',
+      path: '/pages/index/index',
+    };
+  });
   const [currentSolitaireList, setCurrentSolitaireList] = useState<TypeSolitaireItem[]>([]);
   const [robotIdiom, setRobotIdiom] = useState<TypeIdiomItem>();
 

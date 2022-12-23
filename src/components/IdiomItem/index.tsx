@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { View, Text, Image } from '@tarojs/components';
 import ArrowIcon from '@/assets/images/arrow.png';
 import { generalColorByStr } from '@/utils/index';
 import type { IdiomListGetRes } from '@/types/http-types/idiom-list';
@@ -20,26 +21,26 @@ export default function IdiomItem({ item, allowToggle = true }: { item: IdiomLis
   };
 
   return (
-    <div className={styles.collapseCon} onClick={handleToggleStatus}>
-      <div className={styles.leftCon} style={{ backgroundColor: generalColorByStr(item.pinyin.split(' ')[0]) }}>
-        <div className={styles.avatarText}>{item.pinyin.split(' ')[0]}</div>
-      </div>
-      <div className={styles.rightCon}>
-        <div className={styles.titleCon}>
-          <span className={styles.titleText}>{item.word}</span>
-          {allowToggle && <img className={`${styles.icon} ${open ? styles.openIcon : ''}`} src={ArrowIcon} />}
-        </div>
-        <div className={`${styles.contentCon} ${open ? styles.showAll : ''}`}>
+    <View className={styles.collapseCon} onClick={handleToggleStatus}>
+      <View className={styles.leftCon} style={{ backgroundColor: generalColorByStr(item.pinyin.split(' ')[0]) }}>
+        <View className={styles.avatarText}>{item.pinyin.split(' ')[0]}</View>
+      </View>
+      <View className={styles.rightCon}>
+        <View className={styles.titleCon}>
+          <Text className={styles.titleText}>{item.word}</Text>
+          {allowToggle && <Image className={`${styles.icon} ${open ? styles.openIcon : ''}`} src={ArrowIcon} />}
+        </View>
+        <View className={`${styles.contentCon} ${open ? styles.showAll : ''}`}>
           {contentArr.map((contentItem, index) => {
             return (
-              <div key={index} className={styles.content}>
-                <span className={styles.contextKey}>{contentItem.key}: </span>
-                <span className={styles.contextValue}>{contentItem.value}</span>
-              </div>
+              <View key={index} className={styles.content}>
+                <Text className={styles.contextKey}>{contentItem.key}: </Text>
+                <Text className={styles.contextValue}>{contentItem.value}</Text>
+              </View>
             );
           })}
-        </div>
-      </div>
-    </div>
+        </View>
+      </View>
+    </View>
   );
 }

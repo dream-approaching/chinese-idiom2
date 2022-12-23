@@ -1,3 +1,4 @@
 export default definePageConfig({
-  navigationBarTitleText: '查成语'
-})
+  navigationBarTitleText: '查成语',
+  enableShareTimeline: true,
+});

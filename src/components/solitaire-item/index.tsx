@@ -2,7 +2,7 @@ import { View, Text } from '@tarojs/components';
 import { useState, useEffect, memo } from 'react';
 import type { TypeSolitaireItem, TypeIdiomItem } from '@/types/http-types/common';
 import { IdiomBelong, ColorTheme } from '@/config/constants';
-import { IdiomItem } from '@/components';
+import { IdiomItem } from '@/components/index';
 import { AtActivityIndicator, AtModal, AtModalContent } from 'taro-ui';
 import styles from './index.module.less';
 
@@ -34,9 +34,9 @@ function SolitaireItem({ item, size }: { item?: TypeSolitaireItem; size?: string
             {item?.idiom.pinyin.split(' ')[0]}
           </View>
         </View>
-        <View className={styles.idiomContent}>
+        <View className={styles.idiomContent} onClick={handleShowModal}>
           {(item?.idiom.word && (
-            <Text onClick={handleShowModal} className={`${styles.idiomText} ${item.effect ? '' : styles.unEffect}`}>
+            <Text className={`${styles.idiomText} ${item.effect ? '' : styles.unEffect}`}>
               {item.idiom.word}
               {!item.effect && '(无效)'}
             </Text>

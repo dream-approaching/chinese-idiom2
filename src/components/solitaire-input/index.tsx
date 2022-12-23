@@ -1,9 +1,10 @@
-import { View, Text } from '@tarojs/components';
+import { View, Text, Input } from '@tarojs/components';
 import { generalColorByStr } from '@/utils/index';
-import { AtInput } from 'taro-ui';
+// import { AtInput } from 'taro-ui';
 import { useState, useEffect } from 'react';
 import { Max_Idiom_Time, Show_Skip_Time } from '@/config/constants';
 import { useInterval } from '@/hooks/index';
+import type { CommonEventFunction, InputProps } from '@tarojs/components/types';
 import styles from './index.module.less';
 
 export default function SolitaireInput({
@@ -18,7 +19,7 @@ export default function SolitaireInput({
   pinyin: string;
   submitValue: string;
   allowSkipTimes: number;
-  onChange: (value: string) => void;
+  onChange: CommonEventFunction<InputProps.inputEventDetail>;
   onSubmit: () => void;
   handleRestart: () => void;
   onSkip: () => void;
@@ -61,16 +62,16 @@ export default function SolitaireInput({
           </View>
         </View>
         <View className={styles.idiomContent}>
-          <AtInput
+          <Input
             disabled={inputDisabled}
-            border={false}
             name="submitValue"
             maxlength={10}
-            title=""
             type="text"
             placeholder="请在此处接龙"
             value={submitValue}
-            onChange={onChange}
+            onInput={onChange}
+            onConfirm={handleSubmit}
+            confirmType="done"
           />
         </View>
         <View className={styles.rightContent} onClick={handleSubmit}>

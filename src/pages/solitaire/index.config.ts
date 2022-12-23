@@ -1,3 +1,4 @@
 export default definePageConfig({
-  navigationBarTitleText: '玩接龙'
-})
+  navigationBarTitleText: '玩接龙',
+  enableShareTimeline: true,
+});

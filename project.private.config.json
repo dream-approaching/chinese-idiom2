@@ -1,0 +1,28 @@
+{
+    "description": "项目私有配置文件。此文件中的内容将覆盖 project.config.json 中的相同字段。项目的改动优先同步到此文件中。详见文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/projectconfig.html",
+    "projectname": "chinese-idiom2",
+    "setting": {
+        "compileHotReLoad": false
+    },
+    "libVersion": "2.25.4",
+    "condition": {
+        "miniprogram": {
+            "list": [
+                {
+                    "name": "接龙页面",
+                    "pathName": "pages/solitaire/index",
+                    "query": "",
+                    "launchMode": "default",
+                    "scene": null
+                },
+                {
+                    "name": "成语查询",
+                    "pathName": "pages/dictionary/index",
+                    "query": "",
+                    "launchMode": "default",
+                    "scene": null
+                }
+            ]
+        }
+    }
+}
