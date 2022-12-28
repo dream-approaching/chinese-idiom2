@@ -2,6 +2,9 @@ import { View, Text } from '@tarojs/components';
 import { useState, useEffect, memo } from 'react';
 import type { TypeSolitaireItem, TypeIdiomItem } from '@/types/http-types/common';
 import { IdiomBelong, ColorTheme } from '@/config/constants';
+import HttpRequest from '@/config/request';
+import type { IdiomListGetReq, IdiomListGetRes } from '@/types/http-types/idiom-list';
+import { IdiomApi } from '@/api/index';
 import { IdiomItem } from '@/components/index';
 import { AtActivityIndicator, AtModal, AtModalContent } from 'taro-ui';
 import styles from './index.module.less';
@@ -11,8 +14,15 @@ function SolitaireItem({ item, size }: { item?: TypeSolitaireItem; size?: string
 
   const [modalShow, setModalShow] = useState(false);
 
-  const handleShowModal = () => {
+  const handleShowModal = async () => {
     if (!item?.idiom.word || !item?.effect) return;
+    if (item.belong === IdiomBelong.user) {
+      const res = await HttpRequest<IdiomListGetReq, IdiomListGetRes['data']>({
+        url: IdiomApi.getList,
+        data: { page: 1, pageSize: 1, word: item.idiom.word },
+      });
+      item.idiom = res?.list[0];
+    }
     setModalShow(true);
   };
 
@@ -57,7 +67,7 @@ function SolitaireItem({ item, size }: { item?: TypeSolitaireItem; size?: string
       {item?.idiom && (
         <AtModal isOpened={modalShow} className={styles.modalContain} onClose={handleCloseModal}>
           <AtModalContent>
-            <IdiomItem item={item?.idiom as TypeIdiomItem} allowToggle={false} />
+            <IdiomItem item={item?.idiom} allowToggle={false} />
           </AtModalContent>
         </AtModal>
       )}

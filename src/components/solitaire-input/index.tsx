@@ -29,9 +29,9 @@ export default function SolitaireInput({
   const [waitTime, setWaitTime] = useState(0);
 
   useEffect(() => {
-    if (submitValue.length === 0 || waitTime > Max_Idiom_Time) {
+    if (submitValue.length === 0 || waitTime >= Max_Idiom_Time) {
       setDisabled(true);
-      if (waitTime > Max_Idiom_Time) {
+      if (waitTime >= Max_Idiom_Time) {
         setInputDisabled(true);
       }
     } else {
@@ -42,7 +42,7 @@ export default function SolitaireInput({
   useInterval(() => setWaitTime(waitTime + 1), waitTime >= Max_Idiom_Time ? null : 1000);
 
   const handleSubmit = () => {
-    if (disabled) {
+    if (disabled || inputDisabled) {
       return;
     }
     onSubmit();
@@ -69,14 +69,15 @@ export default function SolitaireInput({
             type="text"
             placeholder="请在此处接龙"
             value={submitValue}
+            controlled
             onInput={onChange}
             onConfirm={handleSubmit}
             confirmType="done"
           />
         </View>
         <View className={styles.rightContent} onClick={handleSubmit}>
-          <Text className={`${styles.submitBtn} ${disabled ? styles.disabled : ''}`}>提交</Text>
-          <Text className={`${styles.submitTime} ${disabled ? styles.disabled : ''}`}>{waitTime} s</Text>
+          <Text className={`${styles.submitBtn} ${disabled || inputDisabled ? styles.disabled : ''}`}>提交</Text>
+          <Text className={`${styles.submitTime} ${disabled || inputDisabled ? styles.disabled : ''}`}>{waitTime} s</Text>
         </View>
       </View>
       <View className={styles.inputFooter}>

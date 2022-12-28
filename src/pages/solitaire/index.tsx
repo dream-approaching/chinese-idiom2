@@ -20,7 +20,9 @@ const Solitaire = () => {
   const lastTimeRef = useRef(lastTime);
 
   const handleChangeValue = (event) => {
-    setSubmitValue(event.detail.value.trim().slice(0, 20));
+    const value = event.detail.value.trim().slice(0, 20);
+    setSubmitValue(value);
+    return value;
   };
 
   useShareAppMessage((res) => {
@@ -135,7 +137,6 @@ const Solitaire = () => {
     if (currentSolitaireList.length === 0) return;
     setLastTime(dayjs().valueOf()); // 记录上一次的结束时间
     setEffectSolitaireList(currentSolitaireList.filter((item) => item.effect).map((item) => item));
-    console.log('%c zjs currentSolitaireList:', 'color: #fff;background: #b457ff;', currentSolitaireList);
   }, [currentSolitaireList]);
 
   const [nextSolitaire, setNextSolitaire] = useState<TypeSolitaireItem>();
