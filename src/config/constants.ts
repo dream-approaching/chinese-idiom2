@@ -1,3 +1,5 @@
+export const VERSION = 'v1.0.2';
+
 export enum IdiomBelong {
   user = 'user',
   robot = 'robot',

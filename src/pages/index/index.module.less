@@ -40,14 +40,20 @@
 
   .footer {
     position: fixed;
-    bottom: 60px;
-    .shareBtn {
+    bottom: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    .footerBtn {
+      flex: 1;
       letter-spacing: 1px;
-      font-size: 14px;
+      font-size: 12px;
       padding: 10px;
       color: #4a6a76;
       border: none;
       background: none;
+      display: block;
       &::after {
         display: none;
       }

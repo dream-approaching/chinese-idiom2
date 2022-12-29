@@ -1,5 +1,6 @@
 import Taro, { useShareAppMessage, useShareTimeline } from '@tarojs/taro';
 import { View, Text, Button } from '@tarojs/components';
+import { VERSION } from '@/config/constants';
 import { HomeHeader } from './components';
 import styles from './index.module.less';
 
@@ -33,6 +34,12 @@ const Home = () => {
       path: '/pages/index/index',
     };
   });
+
+  const handleAppreciate = () => {
+    Taro.previewImage({
+      urls: ['https://zhengjinshou.cn/other/like.jpg'],
+    });
+  };
   return (
     <View className={styles.homeCon}>
       <HomeHeader />
@@ -45,8 +52,12 @@ const Home = () => {
         </View>
       </View>
       <View className={styles.footer}>
-        <Button className={styles.shareBtn} data-name="shareBtn" open-type="share">
+        <Button className={styles.footerBtn}>{VERSION}</Button>
+        <Button className={styles.footerBtn} data-name="shareBtn" open-type="share">
           分享
+        </Button>
+        <Button className={styles.footerBtn} onClick={handleAppreciate}>
+          赞赏
         </Button>
       </View>
     </View>
