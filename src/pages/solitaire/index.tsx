@@ -4,7 +4,7 @@ import HttpRequest from '@/config/request';
 import dayjs from 'dayjs';
 import Taro, { useShareAppMessage, useShareTimeline } from '@tarojs/taro';
 import { IdiomApi } from '@/api/index';
-import { getPinYinByWord, genIdiomByWord } from '@/utils/index';
+import { getPinYinByWord, genIdiomByWord, getSolitaireHeight } from '@/utils/index';
 import type { IdiomSolitaireRobotReq, IdiomSolitaireRobotRes } from '@/types/http-types/idiom-solitaire-robot';
 import type { TypeSolitaireItem, TypeIdiomItem } from '@/types/http-types/common';
 import { SolitaireItem, SolitaireInput } from '@/components';
@@ -13,7 +13,7 @@ import styles from './index.module.less';
 import { SolitaireHeader, GameStart } from './components';
 
 const remainNum = 4;
-const itemHeight = 3; // 3rem
+const { itemHeight, unit } = getSolitaireHeight();
 const Solitaire = () => {
   const [submitValue, setSubmitValue] = useState('');
   const [lastTime, setLastTime] = useState(0);
@@ -133,6 +133,7 @@ const Solitaire = () => {
 
   // 有效的列表
   const [effectSolitaireList, setEffectSolitaireList] = useState<TypeSolitaireItem[]>([]);
+  console.log('%c zjs currentSolitaireList:', 'color: #fff;background: #b457ff;', currentSolitaireList);
   useEffect(() => {
     if (currentSolitaireList.length === 0) return;
     setLastTime(dayjs().valueOf()); // 记录上一次的结束时间
@@ -183,7 +184,7 @@ const Solitaire = () => {
         ) : (
           <View
             className={styles.contentCon}
-            style={{ top: `${effectSolitaireList.length > remainNum ? -(effectSolitaireList.length - remainNum) * itemHeight : 0}rem` }}
+            style={{ top: `${effectSolitaireList.length > remainNum ? -(effectSolitaireList.length - remainNum) * itemHeight : 0}${unit}` }}
           >
             {effectSolitaireList.map((item) => (
               <SolitaireItem key={item.idiom.word} item={item} />

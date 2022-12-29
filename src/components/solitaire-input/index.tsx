@@ -65,7 +65,7 @@ export default function SolitaireInput({
           <Input
             disabled={inputDisabled}
             name="submitValue"
-            maxlength={10}
+            maxlength={40}
             type="text"
             placeholder="请在此处接龙"
             value={submitValue}
@@ -73,6 +73,7 @@ export default function SolitaireInput({
             onInput={onChange}
             onConfirm={handleSubmit}
             confirmType="done"
+            placeholderClass={styles.placeholder}
           />
         </View>
         <View className={styles.rightContent} onClick={handleSubmit}>
