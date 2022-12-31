@@ -1,13 +1,12 @@
 import { View, Text, Input } from '@tarojs/components';
 import { generalColorByStr } from '@/utils/index';
-// import { AtInput } from 'taro-ui';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo } from 'react';
 import { Max_Idiom_Time, Show_Skip_Time } from '@/config/constants';
-import { useInterval } from '@/hooks/index';
 import type { CommonEventFunction, InputProps } from '@tarojs/components/types';
+import useGetWaitTime from './use-get-wait-time-hook';
 import styles from './index.module.less';
 
-export default function SolitaireInput({
+function SolitaireInput({
   pinyin,
   submitValue,
   onChange,
@@ -26,7 +25,7 @@ export default function SolitaireInput({
 }) {
   const [disabled, setDisabled] = useState(false);
   const [inputDisabled, setInputDisabled] = useState(false);
-  const [waitTime, setWaitTime] = useState(0);
+  const { waitTime, setWaitTime } = useGetWaitTime();
 
   useEffect(() => {
     if (submitValue.length === 0 || waitTime >= Max_Idiom_Time) {
@@ -38,8 +37,6 @@ export default function SolitaireInput({
       setDisabled(false);
     }
   }, [submitValue, waitTime]);
-
-  useInterval(() => setWaitTime(waitTime + 1), waitTime >= Max_Idiom_Time ? null : 1000);
 
   const handleSubmit = () => {
     if (disabled || inputDisabled) {
@@ -99,3 +96,5 @@ export default function SolitaireInput({
     </View>
   );
 }
+
+export default memo(SolitaireInput);

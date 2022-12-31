@@ -20,6 +20,7 @@ const Solitaire = () => {
   const lastTimeRef = useRef(lastTime);
 
   const handleChangeValue = (event) => {
+    console.log('%c zjs event:', 'color: #fff;background: #b457ff;', event);
     const value = event.detail.value.trim().slice(0, 20);
     setSubmitValue(value);
     return value;
