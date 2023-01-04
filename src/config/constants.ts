@@ -1,4 +1,4 @@
-export const VERSION = 'v1.0.2';
+export const VERSION = 'v1.0.4';
 
 export enum IdiomBelong {
   user = 'user',
