@@ -1,9 +1,8 @@
 import { View, Text, Input } from '@tarojs/components';
 import { generalColorByStr } from '@/utils/index';
 import { useState, useEffect, memo } from 'react';
-import { Max_Idiom_Time, Show_Skip_Time } from '@/config/constants';
 import type { CommonEventFunction, InputProps } from '@tarojs/components/types';
-import useGetWaitTime from './use-get-wait-time-hook';
+import SolitaireTime from './time-con';
 import styles from './index.module.less';
 
 function SolitaireInput({
@@ -24,30 +23,27 @@ function SolitaireInput({
   onSkip: () => void;
 }) {
   const [disabled, setDisabled] = useState(false);
-  const [inputDisabled, setInputDisabled] = useState(false);
-  const { waitTime, setWaitTime } = useGetWaitTime();
+  const [timeout, setTimeout] = useState(false);
 
-  useEffect(() => {
-    if (submitValue.length === 0 || waitTime >= Max_Idiom_Time) {
-      setDisabled(true);
-      if (waitTime >= Max_Idiom_Time) {
-        setInputDisabled(true);
-      }
-    } else {
-      setDisabled(false);
-    }
-  }, [submitValue, waitTime]);
+  const onTimeout = () => {
+    setTimeout(true);
+  };
 
   const handleSubmit = () => {
-    if (disabled || inputDisabled) {
+    if (disabled) {
       return;
     }
     onSubmit();
   };
 
+  useEffect(() => {
+    setDisabled(timeout || submitValue.length === 0);
+  }, [timeout, submitValue]);
+
   const handleSkip = () => {
     if (!allowSkipTimes) return;
-    setWaitTime(0); // 重置等待时间
+    // 重置状态
+    setTimeout(false);
     onSkip();
   };
   return (
@@ -60,7 +56,7 @@ function SolitaireInput({
         </View>
         <View className={styles.idiomContent}>
           <Input
-            disabled={inputDisabled}
+            disabled={timeout}
             name="submitValue"
             maxlength={40}
             type="text"
@@ -74,17 +70,17 @@ function SolitaireInput({
           />
         </View>
         <View className={styles.rightContent} onClick={handleSubmit}>
-          <Text className={`${styles.submitBtn} ${disabled || inputDisabled ? styles.disabled : ''}`}>提交</Text>
-          <Text className={`${styles.submitTime} ${disabled || inputDisabled ? styles.disabled : ''}`}>{waitTime} s</Text>
+          <Text className={`${styles.submitBtn} ${disabled ? styles.disabled : ''}`}>提交</Text>
+          <SolitaireTime key={allowSkipTimes} onTimeout={onTimeout} className={`${styles.submitTime} ${disabled ? styles.disabled : ''}`} />
         </View>
       </View>
       <View className={styles.inputFooter}>
-        {waitTime > Show_Skip_Time && waitTime < Max_Idiom_Time && (
+        {!timeout && allowSkipTimes > 0 && (
           <Text className={`${styles.jumpBtn} ${!allowSkipTimes ? styles.jumpDisabled : ''}`} onClick={handleSkip}>
-            答不上来 点击跳过 (剩余 {allowSkipTimes} 次)
+            点击跳过 (剩余 {allowSkipTimes} 次)
           </Text>
         )}
-        {waitTime >= Max_Idiom_Time && (
+        {timeout && (
           <>
             <Text className={styles.gameOverTip}>超出等待时间，此局已结束</Text>
             <Text className={styles.gameOverBtn} onClick={handleRestart}>
